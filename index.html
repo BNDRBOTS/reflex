@@ -164,7 +164,17 @@
         @media (min-width: 768px) { .narrative-section { padding: 0 6vw; } }
         
         #scroll-track { height: 500vh; position: relative; }
-        #fixed-content { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; }
+        
+        /* HARDWARE ACCELERATED STICKY CONTAINER - Prevents Scroll Glitches */
+        #fixed-content { 
+            position: sticky; 
+            top: 0; 
+            height: 100vh; 
+            width: 100%; 
+            overflow: hidden; 
+            transform: translateZ(0); 
+            will-change: transform;
+        }
 
         .text-fluid-hero { font-size: clamp(4rem, 12vw, 14rem); }
         .text-fluid-h2 { font-size: clamp(3.5rem, 9vw, 10rem); }
@@ -357,10 +367,13 @@
             }, { passive: true });
 
             const renderCursor = () => {
-                currX += (targetX - currX) * 0.2; // Smooth lerp
-                currY += (targetY - currY) * 0.2;
-                cursor.style.setProperty('--cx', `${currX}px`);
-                cursor.style.setProperty('--cy', `${currY}px`);
+                // Optimization: Only update DOM styles if the cursor has actually moved
+                if (Math.abs(targetX - currX) > 0.1 || Math.abs(targetY - currY) > 0.1) {
+                    currX += (targetX - currX) * 0.2; // Smooth lerp
+                    currY += (targetY - currY) * 0.2;
+                    cursor.style.setProperty('--cx', `${currX}px`);
+                    cursor.style.setProperty('--cy', `${currY}px`);
+                }
                 requestAnimationFrame(renderCursor);
             };
             requestAnimationFrame(renderCursor);
@@ -377,7 +390,7 @@
         }, { passive: true });
 
         // ==========================================
-        // SMOOTH SCROLL & ANIMATIONS
+        // SMOOTH SCROLL & ANIMATIONS (Glitch-Free)
         // ==========================================
         gsap.registerPlugin(ScrollTrigger);
 
@@ -420,14 +433,16 @@
                 
                 if (isFirst) {
                     gsap.to(content, {
-                        scrollTrigger: { trigger: "#scroll-track", start: "top top", end: `${endProgress * 100}% top`, scrub: 1 },
+                        // FIXED SCROLL GLITCH: Changed scrub: 1 to scrub: true
+                        scrollTrigger: { trigger: "#scroll-track", start: "top top", end: `${endProgress * 100}% top`, scrub: true },
                         scale: 0.9, opacity: 0, ease: "none"
                     });
                 } else {
                     gsap.fromTo(content, 
                         { scale: 1.1, opacity: 0, visibility: 'hidden' },
                         {
-                            scrollTrigger: { trigger: "#scroll-track", start: `${startProgress * 100}% top`, end: `${endProgress * 100}% top`, scrub: 1 },
+                            // FIXED SCROLL GLITCH: scrub: true locks animation 1:1 with Lenis
+                            scrollTrigger: { trigger: "#scroll-track", start: `${startProgress * 100}% top`, end: `${endProgress * 100}% top`, scrub: true },
                             scale: isLast ? 1 : 0.9, opacity: 1, visibility: 'visible', ease: "none",
                             keyframes: isLast ? null : { "0%": { opacity: 0, scale: 1.1 }, "30%": { opacity: 1, scale: 1 }, "70%": { opacity: 1, scale: 1 }, "100%": { opacity: 0, scale: 0.9 } }
                         }
@@ -437,7 +452,7 @@
         };
 
         // ==========================================
-        // DOPAMINE ENGINE: LO-FI TRAP STEP SEQUENCER
+        // DOPAMINE ENGINE: ORIGINAL LO-FI TRAP STEP SEQUENCER
         // ==========================================
         class LoFiTrapEngine {
             constructor() {

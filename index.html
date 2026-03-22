@@ -6,12 +6,10 @@
     <meta name="description" content="Premium sound and flawless execution for Phoenix events.">
     <title>Reflex Entertainment | Premium Sound</title>
     
-    <!-- FAT, Aggressive Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -34,7 +32,6 @@
         }
     </script>
 
-    <!-- Lenis, GSAP & Three.js -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -115,7 +112,6 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* Highly Optimized Cursor */
         #custom-cursor {
             position: fixed;
             top: 0; left: 0;
@@ -125,7 +121,6 @@
             border-radius: 0;
             pointer-events: none;
             z-index: 9999;
-            /* Use hardware accelerated transform driven by CSS vars */
             transform: translate3d(var(--cx), var(--cy), 0) translate(-50%, -50%) rotate(45deg);
             transition: width 0.2s, height 0.2s, background-color 0.2s;
             mix-blend-mode: screen;
@@ -137,7 +132,6 @@
             --cursor-size: 50px !important;
             background: transparent !important;
             border: 4px solid #b026ff;
-            /* Rotation state change handled by a class addition */
             transform: translate3d(var(--cx), var(--cy), 0) translate(-50%, -50%) rotate(0deg) !important;
             transition: width 0.2s, height 0.2s, background-color 0.2s, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -165,7 +159,6 @@
         
         #scroll-track { height: 500vh; position: relative; }
         
-        /* HARDWARE ACCELERATED STICKY CONTAINER - Prevents Scroll Glitches */
         #fixed-content { 
             position: sticky; 
             top: 0; 
@@ -186,6 +179,7 @@
         .hard-border { border: 2px solid rgba(255,255,255,0.1); }
         .neon-border:hover { border-color: #b026ff; box-shadow: 0 0 20px rgba(176, 38, 255, 0.4); }
     </style>
+<base target="_blank">
 </head>
 <body class="selection:bg-neon selection:text-black">
 
@@ -200,7 +194,6 @@
 
     <div id="webgl-container" aria-hidden="true"></div>
 
-    <!-- Navigation -->
     <nav id="main-nav" class="fixed top-0 left-0 w-full px-6 md:px-10 py-8 z-50 flex justify-between items-center no-select" aria-label="Main Navigation">
         <div class="text-xs md:text-sm font-bold tracking-widest uppercase cursor-hover-target text-white font-sans">Reflex <span class="text-neon">ENT</span></div>
         
@@ -216,7 +209,6 @@
         </div>
     </nav>
 
-    <!-- Main Scroll Journey -->
     <main id="main-content" class="ui-layer">
         <div id="scroll-track">
             <div id="fixed-content">
@@ -337,9 +329,6 @@
     </dialog>
 
     <script>
-        // ==========================================
-        // SYSTEM STATE
-        // ==========================================
         const state = {
             audioPlaying: false,
             audioContext: null,
@@ -348,12 +337,9 @@
             scrollProgress: 0,
             isMobile: window.matchMedia("(max-width: 768px)").matches,
             isPointerFine: window.matchMedia("(pointer: fine)").matches,
-            kickPulse: 0.0 // Tracks the intensity of the 808 for visualizer
+            kickPulse: 0.0
         };
 
-        // ==========================================
-        // BUTTERY SMOOTH CURSOR (Zero Lag CSS Vars)
-        // ==========================================
         const cursor = document.getElementById('custom-cursor');
         let targetX = window.innerWidth / 2;
         let targetY = window.innerHeight / 2;
@@ -367,9 +353,8 @@
             }, { passive: true });
 
             const renderCursor = () => {
-                // Optimization: Only update DOM styles if the cursor has actually moved
                 if (Math.abs(targetX - currX) > 0.1 || Math.abs(targetY - currY) > 0.1) {
-                    currX += (targetX - currX) * 0.2; // Smooth lerp
+                    currX += (targetX - currX) * 0.2;
                     currY += (targetY - currY) * 0.2;
                     cursor.style.setProperty('--cx', `${currX}px`);
                     cursor.style.setProperty('--cy', `${currY}px`);
@@ -389,9 +374,6 @@
             state.isPointerFine = window.matchMedia("(pointer: fine)").matches;
         }, { passive: true });
 
-        // ==========================================
-        // SMOOTH SCROLL & ANIMATIONS (Glitch-Free)
-        // ==========================================
         gsap.registerPlugin(ScrollTrigger);
 
         const lenis = new Lenis({
@@ -433,7 +415,6 @@
                 
                 if (isFirst) {
                     gsap.to(content, {
-                        // FIXED SCROLL GLITCH: Changed scrub: 1 to scrub: true
                         scrollTrigger: { trigger: "#scroll-track", start: "top top", end: `${endProgress * 100}% top`, scrub: true },
                         scale: 0.9, opacity: 0, ease: "none"
                     });
@@ -441,7 +422,6 @@
                     gsap.fromTo(content, 
                         { scale: 1.1, opacity: 0, visibility: 'hidden' },
                         {
-                            // FIXED SCROLL GLITCH: scrub: true locks animation 1:1 with Lenis
                             scrollTrigger: { trigger: "#scroll-track", start: `${startProgress * 100}% top`, end: `${endProgress * 100}% top`, scrub: true },
                             scale: isLast ? 1 : 0.9, opacity: 1, visibility: 'visible', ease: "none",
                             keyframes: isLast ? null : { "0%": { opacity: 0, scale: 1.1 }, "30%": { opacity: 1, scale: 1 }, "70%": { opacity: 1, scale: 1 }, "100%": { opacity: 0, scale: 0.9 } }
@@ -451,14 +431,10 @@
             });
         };
 
-        // ==========================================
-        // DOPAMINE ENGINE: ORIGINAL LO-FI TRAP STEP SEQUENCER
-        // ==========================================
         class LoFiTrapEngine {
             constructor() {
                 this.ctx = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // Master Bus Compression & EQ
                 this.masterCompressor = this.ctx.createDynamicsCompressor();
                 this.masterCompressor.threshold.value = -10;
                 this.masterCompressor.knee.value = 10;
@@ -467,7 +443,7 @@
                 this.masterCompressor.release.value = 0.25;
 
                 this.masterGain = this.ctx.createGain();
-                this.masterGain.gain.value = 0; // Fade in
+                this.masterGain.gain.value = 0;
 
                 this.analyser = this.ctx.createAnalyser();
                 this.analyser.fftSize = 256;
@@ -479,20 +455,26 @@
                 this.masterGain.connect(this.analyser);
                 this.analyser.connect(this.ctx.destination);
 
-                // Sequencer state
                 this.isPlaying = false;
-                this.tempo = 75; // Classic trap tempo
-                this.lookahead = 25; // ms
-                this.scheduleAheadTime = 0.1; // s
+                this.tempo = 75;
+                this.lookahead = 25;
+                this.scheduleAheadTime = 0.1;
                 this.nextNoteTime = 0.0;
                 this.current16thNote = 0;
                 this.timerID = null;
 
-                // Noise Buffer for Hats/Snares
                 this.noiseBuffer = this.createNoiseBuffer();
-                
-                // Background Atmospheric Pad (Drone)
                 this.padNodes = [];
+                
+                // CHORD PROGRESSION: i - VI - III - VII (Cm - Ab - Eb - Bb)
+                this.chords = [
+                    [65.41, 77.78, 98.00],   // Cm (C2, Eb2, G2)
+                    [51.91, 65.41, 77.78],   // Ab (Ab1, C2, Eb2)
+                    [77.78, 98.00, 116.54],  // Eb (Eb2, G2, Bb2)
+                    [58.27, 73.42, 87.31]    // Bb (Bb1, D2, F2)
+                ];
+                this.currentChordIndex = 0;
+                this.oscillators = [];
             }
 
             createNoiseBuffer() {
@@ -509,18 +491,15 @@
                 osc.connect(gain);
                 gain.connect(this.masterCompressor);
 
-                // Deep 808 Pitch Glide
                 osc.frequency.setValueAtTime(120, time);
                 osc.frequency.exponentialRampToValueAtTime(40, time + 0.1);
                 
-                // Attack & Long Decay
                 gain.gain.setValueAtTime(1.5, time);
                 gain.gain.exponentialRampToValueAtTime(0.01, time + 0.8);
 
                 osc.start(time);
                 osc.stop(time + 1.0);
 
-                // Trigger visualizer shockwave slightly ahead of audio processing
                 setTimeout(() => { state.kickPulse = 1.0; }, (time - this.ctx.currentTime) * 1000);
             }
 
@@ -534,7 +513,7 @@
 
                 const gain = this.ctx.createGain();
                 gain.gain.setValueAtTime(velocity, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.05); // Very snappy
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.05);
 
                 noiseSrc.connect(filter);
                 filter.connect(gain);
@@ -545,7 +524,6 @@
             }
 
             playSnare(time) {
-                // Snare noise
                 const noiseSrc = this.ctx.createBufferSource();
                 noiseSrc.buffer = this.noiseBuffer;
                 const filter = this.ctx.createBiquadFilter();
@@ -555,7 +533,6 @@
                 noiseGain.gain.setValueAtTime(0.8, time);
                 noiseGain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
                 
-                // Snare body (pop)
                 const osc = this.ctx.createOscillator();
                 osc.type = 'triangle';
                 const oscGain = this.ctx.createGain();
@@ -571,15 +548,12 @@
             }
 
             startPad() {
-                const rootFreq = 65.41; // C2
-                const chords = [rootFreq, rootFreq * 1.5, rootFreq * 1.889]; // C min chord approx
-                
                 const filter = this.ctx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.value = 400; // Very muffled lo-fi
+                filter.frequency.value = 400;
 
                 const lfo = this.ctx.createOscillator();
-                lfo.frequency.value = 0.2; // Slow breathing
+                lfo.frequency.value = 0.2;
                 const lfoGain = this.ctx.createGain();
                 lfoGain.gain.value = 200;
                 lfo.connect(lfoGain);
@@ -588,30 +562,56 @@
                 this.padNodes.push(lfo, lfoGain, filter);
 
                 const padMasterGain = this.ctx.createGain();
-                padMasterGain.gain.value = 0.3; // Sit in the back
+                padMasterGain.gain.value = 0.3;
                 filter.connect(padMasterGain);
                 padMasterGain.connect(this.masterCompressor);
                 this.padNodes.push(padMasterGain);
 
-                chords.forEach(freq => {
+                const freqs = this.chords[this.currentChordIndex];
+                freqs.forEach((freq) => {
                     const osc = this.ctx.createOscillator();
                     osc.type = 'sawtooth';
-                    // Slight detune for analog warmth
-                    osc.frequency.value = freq + (Math.random() * 2 - 1); 
+                    osc.frequency.value = freq;
+                    osc.detune.value = (Math.random() - 0.5) * 8;
                     osc.connect(filter);
                     osc.start();
+                    this.oscillators.push(osc);
                     this.padNodes.push(osc);
                 });
             }
 
-            scheduleNote(beatNumber, time) {
-                // Kick Pattern
-                if (beatNumber === 0 || beatNumber === 10) { this.playKick(time); }
+            changeChord() {
+                this.currentChordIndex = (this.currentChordIndex + 1) % this.chords.length;
+                const newFreqs = this.chords[this.currentChordIndex];
                 
-                // Snare Pattern (Backbeat)
+                this.oscillators.forEach((osc, i) => {
+                    if(newFreqs[i]) {
+                        osc.frequency.setTargetAtTime(newFreqs[i], this.ctx.currentTime, 0.15);
+                    }
+                });
+                
+                this.playSubBass(newFreqs[0]);
+            }
+            
+            playSubBass(freq) {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = freq / 2;
+                
+                gain.gain.setValueAtTime(0.9, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.6);
+                
+                osc.connect(gain);
+                gain.connect(this.masterCompressor);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.6);
+            }
+
+            scheduleNote(beatNumber, time) {
+                if (beatNumber === 0 || beatNumber === 10) { this.playKick(time); }
                 if (beatNumber === 4 || beatNumber === 12) { this.playSnare(time); }
                 
-                // Hat Pattern (16ths with velocity groove)
                 const isDownbeat = beatNumber % 4 === 0;
                 const isOffbeat = beatNumber % 2 !== 0;
                 let vel = 0.2;
@@ -622,13 +622,17 @@
 
             nextNote() {
                 const secondsPerBeat = 60.0 / this.tempo;
-                this.nextNoteTime += 0.25 * secondsPerBeat; // 16th note
+                this.nextNoteTime += 0.25 * secondsPerBeat;
                 this.current16thNote++;
                 if (this.current16thNote === 16) { this.current16thNote = 0; }
             }
 
             scheduler = () => {
                 while (this.nextNoteTime < this.ctx.currentTime + this.scheduleAheadTime) {
+                    if (this.current16thNote === 0 && this.nextNoteTime > this.ctx.currentTime) {
+                        this.changeChord();
+                    }
+                    
                     this.scheduleNote(this.current16thNote, this.nextNoteTime);
                     this.nextNote();
                 }
@@ -652,6 +656,7 @@
                 setTimeout(() => {
                     this.padNodes.forEach(n => { if(n.stop) n.stop(); if(n.disconnect) n.disconnect(); });
                     this.padNodes = [];
+                    this.oscillators = [];
                 }, 1500);
             }
         }
@@ -680,16 +685,12 @@
             }
         });
 
-        // ==========================================
-        // ACCESSIBLE MODAL
-        // ==========================================
         const modal = document.getElementById('contact-modal');
         const mainContent = document.getElementById('main-content');
         const mainNav = document.getElementById('main-nav');
         const openBtns = [document.getElementById('open-contact-nav'), document.getElementById('open-contact-main')];
         const closeBtn = document.getElementById('close-contact');
         const form = document.getElementById('contact-form');
-        const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
         const openModal = () => {
             modal.showModal(); lenis.stop(); 
@@ -719,9 +720,6 @@
             }, 1500);
         });
 
-        // ==========================================
-        // CLEAN, SUBWOOFER WEBGL SURFACE
-        // ==========================================
         const initWebGL = () => {
             const container = document.getElementById('webgl-container');
             const scene = new THREE.Scene();
@@ -753,7 +751,7 @@
             const material = new THREE.ShaderMaterial({
                 uniforms: {
                     u_time: { value: 0 },
-                    u_kick: { value: 0 }, // Driven by JS 808 hits
+                    u_kick: { value: 0 },
                     u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
                 },
                 vertexShader: `
@@ -766,22 +764,18 @@
                         vec3 pos = position;
                         float distSq = pos.x * pos.x + pos.z * pos.z;
                         
-                        // Clean, smooth baseline curve
                         float baseline = 15.0 * exp(-distSq / 400.0) - 10.0;
                         
-                        // The Subwoofer Shockwave (Ripples outward cleanly on 808 hit)
-                        // Uses u_kick which pulses from 1.0 -> 0.0
                         float shockwave = sin(sqrt(distSq) * 0.5 - u_time * 8.0) * exp(-distSq * 0.005) * (u_kick * 6.0);
                         
                         pos.y = baseline + shockwave;
                         
                         vDepth = pos.y;
-                        vGlow = u_kick * exp(-distSq * 0.002); // Center glows hardest on kick
+                        vGlow = u_kick * exp(-distSq * 0.002);
 
                         vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
                         gl_Position = projectionMatrix * mvPosition;
                         
-                        // Points swell on the beat
                         gl_PointSize = (3.0 + (vGlow * 12.0)) * (25.0 / -mvPosition.z);
                     }
                 `,
@@ -796,11 +790,10 @@
 
                         float alpha = smoothstep(0.5, 0.45, ll);
 
-                        vec3 voidColor = vec3(0.05, 0.0, 0.08); // Slight dark purple tint to void
-                        vec3 neonColor = vec3(0.69, 0.15, 1.0); // Hex #b026ff
+                        vec3 voidColor = vec3(0.05, 0.0, 0.08);
+                        vec3 neonColor = vec3(0.69, 0.15, 1.0);
                         vec3 whiteHot = vec3(1.0, 1.0, 1.0);
                         
-                        // Color shifts to white hot when kick is intense, otherwise sits at void/neon
                         vec3 baseColor = mix(voidColor, neonColor, clamp(vDepth * 0.1 + 0.5, 0.0, 1.0));
                         vec3 finalColor = mix(baseColor, whiteHot, vGlow);
                         
@@ -830,15 +823,12 @@
                 const elapsedTime = clock.getElapsedTime();
                 material.uniforms.u_time.value = elapsedTime;
 
-                // Decay the kick pulse frame by frame (smooth release)
                 state.kickPulse = Math.max(0, state.kickPulse - 0.03);
                 material.uniforms.u_kick.value = state.kickPulse;
 
-                // Gentle ambient rotation (no cursor linking to prevent chaos)
                 scene.rotation.x = 0.2 + Math.sin(elapsedTime * 0.1) * 0.05; 
                 scene.rotation.y = elapsedTime * 0.05;
 
-                // Cinematic Scroll Journey
                 const camY = 5 + (state.scrollProgress * 25);
                 const camZ = baseZ - (state.scrollProgress * 35); 
                 camera.position.y = camY;

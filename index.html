@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Premium sound and flawless execution for Phoenix events.">
-    <title>Reflex Entertainment | Premium Sound</title>
+    <title>Reflex Entertainment | Premium Audio Architecture</title>
     
+    <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -20,8 +22,9 @@
                         display: ['"Archivo Black"', 'sans-serif']
                     },
                     colors: { 
-                        void: '#000000',
+                        void: '#050505',
                         neon: '#b026ff',
+                        neonGlow: 'rgba(176, 38, 255, 0.4)'
                     },
                     letterSpacing: {
                         tighter: '-0.04em',
@@ -32,822 +35,799 @@
         }
     </script>
 
+    <!-- Core Libraries -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- SplitText alternative for single file deployment without Club GreenSock -->
+    <script src="https://unpkg.com/split-type"></script>
 
     <style>
+        /* Base Resets & Awwwards Meta Setup */
         :root {
-            --cursor-size: 12px;
-            --cx: 50vw;
-            --cy: 50vh;
+            --cursor-x: 50vw;
+            --cursor-y: 50vh;
+            --cursor-size: 10px;
+            --bg-color: #030303;
         }
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #000000;
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
             color: #ffffff;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior: none; /* Prevent swipe navigation bounce */
         }
+
+        /* Hide Scrollbar but keep functionality */
+        ::-webkit-scrollbar { display: none; }
+        * { -ms-overflow-style: none; scrollbar-width: none; }
 
         .no-select { user-select: none; -webkit-user-select: none; }
         .text-balance { text-wrap: balance; }
 
-        @media (pointer: fine) { body { cursor: none; } }
-
+        /* Lenis Smooth Scroll Meta */
         html.lenis, html.lenis body { height: auto; }
         .lenis.lenis-smooth { scroll-behavior: auto; }
         .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
         .lenis.lenis-stopped { overflow: hidden; }
-        ::-webkit-scrollbar { display: none; }
-        * { -ms-overflow-style: none; scrollbar-width: none; }
 
-        #webgl-container {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: 1;
-            pointer-events: none;
-            mix-blend-mode: screen;
-        }
-
-        #strike-layer {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        .strike-beam {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, #b026ff, transparent);
-            transform: rotate(-35deg);
-            opacity: 0.3;
-            filter: blur(8px);
-        }
-        .strike-glow {
-            position: absolute;
-            background: radial-gradient(circle, #b026ff 0%, transparent 60%);
-            opacity: 0.1;
-            mix-blend-mode: screen;
-        }
-
-        .ui-layer { position: relative; z-index: 10; }
-
-        *:focus-visible { outline: 3px solid #b026ff; outline-offset: 4px; border-radius: 0px; }
-
-        dialog::backdrop {
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-        dialog[open] { animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(1.05); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        #custom-cursor {
-            position: fixed;
-            top: 0; left: 0;
-            width: var(--cursor-size);
-            height: var(--cursor-size);
-            background: #b026ff;
-            border-radius: 0;
+        /* Custom Cursor Architecture (Hardware Accelerated) */
+        @media (pointer: fine) { body { cursor: none; } }
+        #cursor-dot {
+            position: fixed; top: 0; left: 0;
+            width: var(--cursor-size); height: var(--cursor-size);
+            background: #fff;
+            border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
-            transform: translate3d(var(--cx), var(--cy), 0) translate(-50%, -50%) rotate(45deg);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
-            mix-blend-mode: screen;
-            display: none;
+            transform: translate3d(calc(var(--cursor-x) - 50%), calc(var(--cursor-y) - 50%), 0);
+            mix-blend-mode: exclusion;
+            transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease;
             will-change: transform, width, height;
         }
-        @media (pointer: fine) { #custom-cursor { display: block; } }
-        .cursor-hover {
-            --cursor-size: 50px !important;
-            background: transparent !important;
-            border: 4px solid #b026ff;
-            transform: translate3d(var(--cx), var(--cy), 0) translate(-50%, -50%) rotate(0deg) !important;
-            transition: width 0.2s, height 0.2s, background-color 0.2s, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .narrative-section {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: absolute;
-            top: 0; left: 0; width: 100%;
-            padding: 0 1.5rem;
+        #cursor-follower {
+            position: fixed; top: 0; left: 0;
+            width: 40px; height: 40px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
             pointer-events: none;
+            z-index: 9998;
+            transform: translate3d(calc(var(--cursor-x) - 50%), calc(var(--cursor-y) - 50%), 0);
+            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), height 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease;
+            will-change: transform, width, height;
         }
         
-        .content-grid { width: 100%; max-width: 90rem; margin: 0 auto; }
-        
-        .narrative-content {
-            opacity: 0; visibility: hidden; pointer-events: auto; width: 100%;
-            will-change: transform, opacity;
+        /* Cursor States */
+        body.hovering-link #cursor-dot { width: 0px; height: 0px; }
+        body.hovering-link #cursor-follower { 
+            width: 80px; height: 80px; 
+            background: rgba(176, 38, 255, 0.1); 
+            border-color: #b026ff; 
+            backdrop-filter: blur(4px);
         }
 
-        #section-1 .narrative-content { opacity: 1; visibility: visible; }
-        @media (min-width: 768px) { .narrative-section { padding: 0 6vw; } }
-        
-        #scroll-track { height: 500vh; position: relative; }
-        
-        #fixed-content { 
-            position: sticky; 
-            top: 0; 
-            height: 100vh; 
-            width: 100%; 
-            overflow: hidden; 
-            transform: translateZ(0); 
-            will-change: transform;
+        /* WebGL / Canvas Background */
+        #visualizer-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0; pointer-events: none;
+            opacity: 0.6; mix-blend-mode: screen;
         }
 
-        .text-fluid-hero { font-size: clamp(4rem, 12vw, 14rem); }
-        .text-fluid-h2 { font-size: clamp(3.5rem, 9vw, 10rem); }
-        .text-fluid-p { font-size: clamp(1.125rem, 1.5vw, 1.75rem); }
+        /* UI Layer */
+        .ui-layer { position: relative; z-index: 10; }
 
-        .clip-wrap { overflow: hidden; display: block; }
-        .reveal-line { display: block; transform: translateY(110%); will-change: transform; }
+        /* Typography Animation Utilities */
+        .char { transform: translateY(115%); transition: transform .5s cubic-bezier(.19,1,.22,1); }
+        .word { overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+        
+        .text-fluid-hero { font-size: clamp(3.5rem, 10vw, 12rem); line-height: 0.85; }
+        .text-fluid-h2 { font-size: clamp(3rem, 8vw, 8rem); line-height: 0.85; }
+        .text-fluid-p { font-size: clamp(1rem, 1.5vw, 1.5rem); }
 
-        .hard-border { border: 2px solid rgba(255,255,255,0.1); }
-        .neon-border:hover { border-color: #b026ff; box-shadow: 0 0 20px rgba(176, 38, 255, 0.4); }
+        .stroke-text {
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+            transition: -webkit-text-stroke 0.3s ease;
+        }
+        .stroke-text:hover { -webkit-text-stroke: 2px #b026ff; }
+
+        /* Magnetic Button Wrapper */
+        .magnetic-wrap { display: inline-block; padding: 2rem; margin: -2rem; cursor: pointer; }
+        .magnetic-inner { transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); pointer-events: none; }
+        
+        /* Sections & Layout */
+        .narrative-section {
+            min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 10vh 5vw;
+            position: relative;
+        }
+
+        .velocity-skew { will-change: transform; }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed; inset: 0; z-index: 99999;
+            background: #000; display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
+        }
+        .loader-text { font-family: 'Archivo Black', sans-serif; font-size: 2rem; text-transform: uppercase; letter-spacing: 0.2em; overflow: hidden;}
+        .loader-progress { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 1rem; position: relative; overflow: hidden;}
+        .loader-bar { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: #b026ff; }
+
+        /* Fullscreen Contact Modal */
+        #contact-modal {
+            position: fixed; inset: 0; z-index: 500;
+            background: rgba(3, 3, 3, 0.95); backdrop-filter: blur(20px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; visibility: hidden;
+            clip-path: circle(0% at 50% 50%);
+        }
+        #contact-modal.active { pointer-events: all; }
+        
+        .input-line {
+            background: transparent; border: none; border-bottom: 2px solid rgba(255,255,255,0.2);
+            color: white; font-size: clamp(1.5rem, 3vw, 3rem); font-family: 'Manrope', sans-serif;
+            font-weight: 700; padding: 1rem 0; width: 100%; border-radius: 0;
+            transition: border-color 0.3s ease;
+        }
+        .input-line:focus { outline: none; border-color: #b026ff; }
+        .input-line::placeholder { color: rgba(255,255,255,0.1); }
     </style>
-<base target="_blank">
 </head>
-<body class="selection:bg-neon selection:text-black">
+<body>
 
-    <div id="custom-cursor" aria-hidden="true"></div>
-    
-    <div id="strike-layer" aria-hidden="true">
-        <div class="strike-glow w-[80vw] h-[80vw] top-[-20%] left-[-10%]"></div>
-        <div class="strike-glow w-[60vw] h-[60vw] bottom-[-10%] right-[-10%]"></div>
-        <div class="strike-beam w-[150vw] h-[2px] top-[30%] left-[-20%]"></div>
-        <div class="strike-beam w-[150vw] h-[4px] top-[60%] right-[-30%] opacity-20"></div>
+    <!-- Loader -->
+    <div id="loader">
+        <div class="loader-text"><span class="loader-chars text-neon">SYSTEM</span> INIT</div>
+        <div class="loader-progress"><div class="loader-bar"></div></div>
     </div>
 
-    <div id="webgl-container" aria-hidden="true"></div>
+    <!-- Hardware Accelerated Cursors -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-follower"></div>
 
-    <nav id="main-nav" class="fixed top-0 left-0 w-full px-6 md:px-10 py-8 z-50 flex justify-between items-center no-select" aria-label="Main Navigation">
-        <div class="text-xs md:text-sm font-bold tracking-widest uppercase cursor-hover-target text-white font-sans">Reflex <span class="text-neon">ENT</span></div>
+    <!-- Interactive Audio Visualizer -->
+    <canvas id="visualizer-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full px-6 md:px-12 py-8 z-50 flex justify-between items-center mix-blend-difference no-select">
+        <div class="text-sm font-bold tracking-widest uppercase text-white font-sans magnetic-target" data-cursor="hover">Reflex <span class="text-neon">ENT</span></div>
         
-        <div class="flex items-center space-x-8 md:space-x-12">
-            <button id="audio-toggle" class="text-xs md:text-sm font-bold tracking-widest uppercase flex items-center space-x-3 cursor-hover-target group text-white font-sans" aria-label="Toggle Sound" aria-pressed="false">
-                <span id="audio-status" class="transition-colors group-hover:text-neon">SOUND OFF</span>
-                <div class="w-3 h-3 bg-white/20 group-hover:bg-neon transition-all duration-300" id="audio-indicator"></div>
-            </button>
+        <div class="flex items-center space-x-12">
+            <div class="magnetic-wrap" data-cursor="hover" id="audio-toggle">
+                <div class="magnetic-inner flex items-center space-x-3 cursor-pointer group">
+                    <span id="audio-status" class="text-xs font-bold tracking-widest uppercase transition-colors text-white group-hover:text-neon">SOUND OFF</span>
+                    <div class="w-2 h-2 rounded-full bg-white/30 group-hover:bg-neon transition-all duration-300" id="audio-indicator"></div>
+                </div>
+            </div>
             
-            <button id="open-contact-nav" class="text-xs md:text-sm font-bold tracking-widest uppercase cursor-hover-target hover:text-neon transition-colors text-white font-sans" aria-label="Open Contact Form">
-                CONTACT
-            </button>
+            <div class="magnetic-wrap" data-cursor="hover" id="nav-contact-btn">
+                <div class="magnetic-inner text-xs font-bold tracking-widest uppercase text-white cursor-pointer hover:text-neon transition-colors">
+                    CONTACT
+                </div>
+            </div>
         </div>
     </nav>
 
-    <main id="main-content" class="ui-layer">
-        <div id="scroll-track">
-            <div id="fixed-content">
-                
-                <section class="narrative-section" id="section-1" aria-label="Introduction">
-                    <div class="content-grid">
-                        <div class="narrative-content max-w-7xl">
-                            <h1 class="text-fluid-hero font-display uppercase leading-[0.85] tracking-tighter text-white text-balance">
-                                <span class="clip-wrap"><span class="reveal-line hero-target">PREMIUM</span></span>
-                                <span class="clip-wrap"><span class="reveal-line hero-target text-neon">SOUND.</span></span>
-                            </h1>
-                            <div class="clip-wrap mt-8 md:mt-12">
-                                <p class="text-fluid-p font-sans font-bold uppercase tracking-widest text-white/80 max-w-2xl reveal-line hero-sub-target">
-                                    We bring the music. You enjoy the night. No excuses.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="narrative-section" id="section-2" aria-label="Value Proposition">
-                    <div class="content-grid flex justify-end">
-                        <div class="narrative-content max-w-5xl text-right">
-                            <h2 class="text-fluid-h2 font-display uppercase leading-[0.85] tracking-tighter text-balance">
-                                CLEAR SOUND.
-                            </h2>
-                            <h2 class="text-fluid-h2 font-display uppercase leading-[0.85] tracking-tighter text-transparent stroke-text text-balance mt-[-10px]" style="-webkit-text-stroke: 2px #b026ff;">
-                                HIGH ENERGY.
-                            </h2>
-                            <p class="mt-12 text-fluid-p font-sans font-bold max-w-xl ml-auto text-white/70 leading-relaxed uppercase tracking-wide">
-                                We handle the technical side so your event runs without a hitch. The right gear, the right volume, and the perfect timing.
+    <!-- Main Content Flow -->
+    <main id="smooth-wrapper" class="ui-layer">
+        <div id="smooth-content">
+            
+            <!-- HERO -->
+            <section class="narrative-section min-h-screen flex items-center pt-32 pb-20">
+                <div class="max-w-7xl w-full mx-auto velocity-skew">
+                    <h1 class="text-fluid-hero font-display uppercase tracking-tighter text-balance title-anim" data-speed="0.9">
+                        <div class="overflow-hidden">PREMIUM</div>
+                        <div class="overflow-hidden text-neon" style="margin-left: 10vw;">SOUND.</div>
+                    </h1>
+                    <div class="mt-12 md:mt-24 grid grid-cols-1 md:grid-cols-12 gap-8">
+                        <div class="md:col-span-4 md:col-start-9">
+                            <p class="text-fluid-p font-sans font-bold uppercase tracking-widest text-white/70 leading-relaxed fade-up-anim">
+                                We engineer audio environments. You command the night. Absolute acoustic dominance.
                             </p>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section class="narrative-section" id="section-3" aria-label="Process and Equipment">
-                    <div class="content-grid">
-                        <div class="narrative-content max-w-7xl">
-                            <h2 class="text-fluid-h2 font-display uppercase leading-[0.85] tracking-tighter text-balance text-neon">
-                                FLAWLESS.
-                            </h2>
-                            <div class="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-24 font-sans pt-12 relative overflow-hidden group border-t-4 border-white/10">
-                                <div class="absolute top-[-4px] left-0 h-[4px] w-full bg-neon scale-x-0 origin-left transition-transform duration-700 ease-out group-hover:scale-x-100"></div>
-                                
-                                <div class="bg-black/50 p-8 hard-border backdrop-blur-sm">
-                                    <h3 class="text-sm md:text-base font-black tracking-widest uppercase text-neon mb-4 md:mb-6">01 // THE GEAR</h3>
-                                    <p class="font-bold text-white/80 leading-relaxed text-base md:text-xl">Professional-grade audio systems configured specifically for your venue's acoustics. Zero distortion. Maximum impact.</p>
-                                </div>
-                                <div class="bg-black/50 p-8 hard-border backdrop-blur-sm">
-                                    <h3 class="text-sm md:text-base font-black tracking-widest uppercase text-neon mb-4 md:mb-6">02 // THE PROCESS</h3>
-                                    <p class="font-bold text-white/80 leading-relaxed text-base md:text-xl">We arrive early, soundcheck aggressively, and maintain perfect decibel levels from the first guest to the final blackout.</p>
-                                </div>
+            <!-- VALUE PROP -->
+            <section class="narrative-section">
+                <div class="max-w-7xl w-full mx-auto flex flex-col items-end text-right velocity-skew">
+                    <h2 class="text-fluid-h2 font-display uppercase tracking-tighter title-anim">
+                        <div class="overflow-hidden">CRYSTAL CLEAR.</div>
+                        <div class="overflow-hidden stroke-text mt-[-1vw]">BRUTAL ENERGY.</div>
+                    </h2>
+                    <p class="mt-12 text-fluid-p font-sans font-bold uppercase tracking-widest text-white/60 max-w-2xl leading-relaxed fade-up-anim">
+                        We don't just supply gear. We map the acoustics of your venue, calibrate frequencies to eliminate distortion, and deliver a visceral sonic experience.
+                    </p>
+                </div>
+            </section>
+
+            <!-- PROCESS / DATA -->
+            <section class="narrative-section">
+                <div class="max-w-7xl w-full mx-auto velocity-skew">
+                    <h2 class="text-fluid-h2 font-display uppercase tracking-tighter text-neon title-anim mb-16">
+                        <div class="overflow-hidden">THE PROTOCOL.</div>
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/10 border border-white/10">
+                        <div class="bg-black p-12 md:p-20 group hover:bg-[#080808] transition-colors duration-500">
+                            <div class="text-neon font-sans font-black tracking-widest mb-6 flex justify-between">
+                                <span>PHASE 01</span> <span>[GEAR]</span>
                             </div>
+                            <p class="font-sans font-bold text-xl md:text-2xl leading-snug text-white/90">
+                                Deployment of Tier-1 line arrays and low-frequency emitters. Calibrated precisely to the cubic volume of your venue.
+                            </p>
                         </div>
-                    </div>
-                </section>
-
-                <section class="narrative-section" id="section-4" aria-label="Social Proof">
-                    <div class="content-grid flex justify-center text-center">
-                        <div class="narrative-content max-w-6xl">
-                            <h2 class="text-fluid-h2 font-display uppercase leading-[0.85] tracking-tighter text-balance">
-                                TRUSTED BY <span class="text-neon">PHOENIX.</span>
-                            </h2>
-                            <p class="mt-12 text-fluid-p font-sans font-bold max-w-3xl mx-auto text-white/70 leading-relaxed uppercase tracking-wide">
-                                From exclusive private lock-ins to massive corporate takeovers. We make the audio invisible, so the energy takes control.
+                        <div class="bg-black p-12 md:p-20 group hover:bg-[#080808] transition-colors duration-500">
+                            <div class="text-neon font-sans font-black tracking-widest mb-6 flex justify-between">
+                                <span>PHASE 02</span> <span>[EXECUTION]</span>
+                            </div>
+                            <p class="font-sans font-bold text-xl md:text-2xl leading-snug text-white/90">
+                                Aggressive soundchecking. Continuous real-time dynamic range compression during the event. Flawless transitions.
                             </p>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section class="narrative-section" id="section-5" aria-label="Call to Action">
-                    <div class="content-grid flex justify-center text-center">
-                        <div class="narrative-content max-w-5xl">
-                            <h2 class="text-fluid-hero font-display uppercase leading-[0.85] tracking-tighter mb-12 md:mb-20 text-white text-balance">
-                                READY.
-                            </h2>
-                            <button id="open-contact-main" class="inline-flex items-center space-x-6 md:space-x-8 hard-border neon-border px-12 md:px-16 py-6 md:py-8 bg-black hover:bg-neon transition-all duration-300 cursor-hover-target group font-sans">
-                                <span class="text-sm md:text-base font-black tracking-widest uppercase text-white">INITIATE BOOKING</span>
-                                <div class="w-12 md:w-16 h-[3px] bg-white transition-colors relative">
-                                    <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 border-r-[3px] border-t-[3px] border-white transform translate-x-px rotate-45 transition-colors"></div>
-                                </div>
-                            </button>
-                        </div>
+            <!-- CTA -->
+            <section class="narrative-section flex items-center justify-center text-center">
+                <div class="max-w-5xl w-full velocity-skew">
+                    <h2 class="text-fluid-hero font-display uppercase tracking-tighter mb-16 title-anim">
+                        <div class="overflow-hidden">READY.</div>
+                    </h2>
+                    
+                    <div class="magnetic-wrap" data-cursor="hover" id="initiate-btn">
+                        <button class="magnetic-inner inline-flex items-center space-x-6 px-12 py-8 border-2 border-white/20 hover:border-neon bg-black hover:bg-neon/10 transition-all duration-300 font-sans group">
+                            <span class="text-sm font-black tracking-widest uppercase text-white">INITIATE BOOKING</span>
+                            <div class="w-12 h-px bg-white group-hover:bg-neon transition-colors relative">
+                                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 border-r-[2px] border-t-[2px] border-current transform rotate-45"></div>
+                            </div>
+                        </button>
                     </div>
-                </section>
+                </div>
+            </section>
+            
+            <!-- Footer -->
+            <footer class="py-12 border-t border-white/10 text-center font-sans text-xs font-bold tracking-widest uppercase text-white/40">
+                <p>&copy; 2026 REFLEX ENTERTAINMENT. ALL RIGHTS RESERVED.</p>
+            </footer>
 
-            </div>
         </div>
     </main>
 
-    <dialog id="contact-modal" class="bg-black border-4 border-neon text-white p-0 m-auto w-full max-w-5xl rounded-none shadow-[0_0_50px_rgba(176,38,255,0.3)]" aria-labelledby="modal-title" aria-modal="true">
-        <div class="p-8 md:p-24 relative min-h-screen md:min-h-0 flex flex-col justify-center bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjMDAwIi8+CjxjaXJjbGUgY3g9IjEiIGN5PSIxIiByPSIxIiBmaWxsPSIjMjIyIi8+Cjwvc3ZnPg==')]">
-            <button id="close-contact" class="absolute top-6 right-6 md:top-8 md:right-8 p-4 bg-neon text-black hover:bg-white transition-colors cursor-hover-target font-black uppercase tracking-widest text-xs" aria-label="Close Contact Form">
-                CLOSE [X]
-            </button>
-            <h2 id="modal-title" class="text-6xl md:text-8xl font-display uppercase mb-12 md:mb-16 tracking-tighter text-neon">TRANSMIT.</h2>
-            <form id="contact-form" class="space-y-10 md:space-y-14 font-sans" novalidate>
-                <div class="relative group">
-                    <input type="text" id="name" required class="w-full bg-black/80 border-b-4 border-white/20 px-0 py-4 text-white text-xl md:text-3xl font-bold focus:outline-none focus:border-neon transition-colors cursor-hover-target peer" placeholder=" ">
-                    <label for="name" class="absolute left-0 top-4 text-white/50 text-xl md:text-3xl font-bold transition-all peer-focus:-top-8 peer-focus:text-xs peer-focus:md:text-sm peer-focus:tracking-widest peer-focus:text-neon peer-[:not(:placeholder-shown)]:-top-8 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:md:text-sm peer-[:not(:placeholder-shown)]:tracking-widest peer-[:not(:placeholder-shown)]:text-neon uppercase pointer-events-none">IDENTIFICATION</label>
+    <!-- Fullscreen Contact Modal -->
+    <div id="contact-modal" role="dialog" aria-modal="true">
+        <div class="w-full max-w-6xl px-6 md:px-12 mx-auto relative h-screen flex flex-col justify-center">
+            
+            <div class="absolute top-12 right-6 md:right-12 magnetic-wrap" data-cursor="hover" id="close-contact-btn">
+                <button class="magnetic-inner text-xs font-black tracking-widest uppercase text-white hover:text-neon transition-colors" aria-label="Close Contact Form">
+                    CLOSE [X]
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
+                <div>
+                    <h2 class="text-6xl md:text-8xl font-display uppercase tracking-tighter text-neon mb-6">TRANSMIT.</h2>
+                    <p class="font-sans font-bold uppercase tracking-widest text-white/50 text-sm md:text-base leading-relaxed">
+                        Secure connection established. Input venue parameters, expected capacity, and technical requirements. We will return a tactical blueprint within 24 hours.
+                    </p>
                 </div>
-                <div class="relative group">
-                    <input type="date" id="date" required class="w-full bg-black/80 border-b-4 border-white/20 px-0 py-4 text-white text-xl md:text-3xl font-bold focus:outline-none focus:border-neon transition-colors cursor-hover-target peer" style="color-scheme: dark;">
-                    <label for="date" class="absolute left-0 -top-8 text-xs md:text-sm tracking-widest uppercase text-neon font-bold pointer-events-none">TARGET DATE</label>
-                </div>
-                <div class="relative group">
-                    <textarea id="details" rows="2" required class="w-full bg-black/80 border-b-4 border-white/20 px-0 py-4 text-white text-xl md:text-3xl font-bold focus:outline-none focus:border-neon transition-colors cursor-hover-target resize-none peer" placeholder=" "></textarea>
-                    <label for="details" class="absolute left-0 top-4 text-white/50 text-xl md:text-3xl font-bold transition-all peer-focus:-top-8 peer-focus:text-xs peer-focus:md:text-sm peer-focus:tracking-widest peer-focus:text-neon peer-[:not(:placeholder-shown)]:-top-8 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:md:text-sm peer-[:not(:placeholder-shown)]:tracking-widest peer-[:not(:placeholder-shown)]:text-neon uppercase pointer-events-none">PARAMETERS (LOC, CAP, VIBE)</label>
-                </div>
-                <div class="pt-6 md:pt-8">
-                    <button type="submit" class="w-full bg-neon text-black py-6 md:py-8 font-black tracking-widest uppercase text-sm md:text-base hover:bg-white transition-colors cursor-hover-target border-4 border-transparent hover:border-black">
-                        SEND TRANSMISSION
+                
+                <form id="contact-form" class="space-y-12 flex flex-col justify-center" onsubmit="event.preventDefault(); alert('Transmission Received. (UI Demo)');">
+                    <div class="relative">
+                        <input type="text" id="name" required class="input-line peer" placeholder=" ">
+                        <label for="name" class="absolute left-0 top-4 text-white/30 text-xl md:text-2xl font-bold font-sans transition-all peer-focus:-top-6 peer-focus:text-xs peer-focus:text-neon peer-[:not(:placeholder-shown)]:-top-6 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-neon uppercase pointer-events-none tracking-widest">Client Designation</label>
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="date" required class="input-line peer" placeholder=" ">
+                        <label for="date" class="absolute left-0 top-4 text-white/30 text-xl md:text-2xl font-bold font-sans transition-all peer-focus:-top-6 peer-focus:text-xs peer-focus:text-neon peer-[:not(:placeholder-shown)]:-top-6 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-neon uppercase pointer-events-none tracking-widest">Target Date / Location</label>
+                    </div>
+                    
+                    <button type="submit" class="self-start text-xs font-black tracking-widest uppercase text-black bg-white hover:bg-neon px-10 py-5 transition-colors duration-300 magnetic-wrap" data-cursor="hover">
+                        <div class="magnetic-inner">SEND TRANSMISSION</div>
                     </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </dialog>
+    </div>
 
     <script>
-        const state = {
+        // =====================================================================
+        // GLOBAL STATE & UTILS
+        // =====================================================================
+        const State = {
+            isMobile: window.innerWidth < 768,
+            audioReady: false,
             audioPlaying: false,
-            audioContext: null,
-            analyser: null,
-            dataArray: null,
-            scrollProgress: 0,
-            isMobile: window.matchMedia("(max-width: 768px)").matches,
-            isPointerFine: window.matchMedia("(pointer: fine)").matches,
-            kickPulse: 0.0
+            scrollVelocity: 0,
+            mouse: { x: window.innerWidth/2, y: window.innerHeight/2, tX: window.innerWidth/2, tY: window.innerHeight/2 },
+            beatPulse: 0 // Syncs canvas to audio
         };
 
-        const cursor = document.getElementById('custom-cursor');
-        let targetX = window.innerWidth / 2;
-        let targetY = window.innerHeight / 2;
-        let currX = targetX;
-        let currY = targetY;
+        const lerp = (start, end, amt) => (1 - amt) * start + amt * end;
 
-        if (state.isPointerFine) {
+        window.addEventListener('resize', () => {
+            State.isMobile = window.innerWidth < 768;
+        });
+
+        // =====================================================================
+        // HARDWARE ACCELERATED CUSTOM CURSOR
+        // =====================================================================
+        const initCursor = () => {
+            if (State.isMobile || !window.matchMedia("(pointer: fine)").matches) return;
+
+            const dot = document.getElementById('cursor-dot');
+            const follower = document.getElementById('cursor-follower');
+            
+            // Mouse tracking
             window.addEventListener('mousemove', (e) => {
-                targetX = e.clientX;
-                targetY = e.clientY;
-            }, { passive: true });
+                State.mouse.tX = e.clientX;
+                State.mouse.tY = e.clientY;
+            });
 
+            // Smooth Render Loop for Cursor
             const renderCursor = () => {
-                if (Math.abs(targetX - currX) > 0.1 || Math.abs(targetY - currY) > 0.1) {
-                    currX += (targetX - currX) * 0.2;
-                    currY += (targetY - currY) * 0.2;
-                    cursor.style.setProperty('--cx', `${currX}px`);
-                    cursor.style.setProperty('--cy', `${currY}px`);
-                }
+                State.mouse.x = lerp(State.mouse.x, State.mouse.tX, 0.2);
+                State.mouse.y = lerp(State.mouse.y, State.mouse.tY, 0.2);
+                
+                document.documentElement.style.setProperty('--cursor-x', `${State.mouse.x}px`);
+                document.documentElement.style.setProperty('--cursor-y', `${State.mouse.y}px`);
+                
                 requestAnimationFrame(renderCursor);
             };
             requestAnimationFrame(renderCursor);
 
-            document.querySelectorAll('.cursor-hover-target').forEach(el => {
-                el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
-                el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+            // Hover States
+            document.querySelectorAll('[data-cursor="hover"]').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('hovering-link'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('hovering-link'));
             });
-        }
-
-        window.addEventListener('resize', () => {
-            state.isMobile = window.matchMedia("(max-width: 768px)").matches;
-            state.isPointerFine = window.matchMedia("(pointer: fine)").matches;
-        }, { passive: true });
-
-        gsap.registerPlugin(ScrollTrigger);
-
-        const lenis = new Lenis({
-            duration: 1.0, 
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: 'vertical',
-            gestureDirection: 'vertical',
-            smooth: true,
-            mouseMultiplier: 1.0,
-            smoothTouch: false,
-        });
-
-        lenis.on('scroll', ScrollTrigger.update);
-        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-        gsap.ticker.lagSmoothing(0);
-
-        const initHeroAnimation = () => {
-            const tl = gsap.timeline({ defaults: { ease: "expo.out" } }); 
-            tl.to('.hero-target', { y: '0%', duration: 1.2, stagger: 0.1, delay: 0.1 })
-              .to('.hero-sub-target', { y: '0%', opacity: 1, duration: 1.0 }, "-=0.8");
         };
 
-        const initScrollJourney = () => {
-            const sections = gsap.utils.toArray('.narrative-section');
-            const totalSections = sections.length;
-            
-            ScrollTrigger.create({
-                trigger: "#scroll-track",
-                start: "top top", end: "bottom bottom",
-                onUpdate: (self) => { state.scrollProgress = self.progress; }
-            });
+        // =====================================================================
+        // MAGNETIC UI COMPONENT (Awwwards staple)
+        // =====================================================================
+        const initMagneticUI = () => {
+            if (State.isMobile) return;
 
-            sections.forEach((sec, i) => {
-                const content = sec.querySelector('.narrative-content');
-                const isFirst = i === 0;
-                const isLast = i === totalSections - 1;
-                const startProgress = i * (1 / totalSections);
-                const endProgress = isLast ? 1 : (i + 1) * (1 / totalSections);
+            document.querySelectorAll('.magnetic-wrap').forEach(wrap => {
+                const inner = wrap.querySelector('.magnetic-inner');
                 
-                if (isFirst) {
-                    gsap.to(content, {
-                        scrollTrigger: { trigger: "#scroll-track", start: "top top", end: `${endProgress * 100}% top`, scrub: true },
-                        scale: 0.9, opacity: 0, ease: "none"
+                wrap.addEventListener('mousemove', (e) => {
+                    const rect = wrap.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    // Calculate distance from center
+                    const distanceX = e.clientX - centerX;
+                    const distanceY = e.clientY - centerY;
+                    
+                    // Move inner element (strength multiplier)
+                    gsap.to(inner, {
+                        x: distanceX * 0.4,
+                        y: distanceY * 0.4,
+                        duration: 0.4,
+                        ease: "power2.out"
                     });
-                } else {
-                    gsap.fromTo(content, 
-                        { scale: 1.1, opacity: 0, visibility: 'hidden' },
-                        {
-                            scrollTrigger: { trigger: "#scroll-track", start: `${startProgress * 100}% top`, end: `${endProgress * 100}% top`, scrub: true },
-                            scale: isLast ? 1 : 0.9, opacity: 1, visibility: 'visible', ease: "none",
-                            keyframes: isLast ? null : { "0%": { opacity: 0, scale: 1.1 }, "30%": { opacity: 1, scale: 1 }, "70%": { opacity: 1, scale: 1 }, "100%": { opacity: 0, scale: 0.9 } }
-                        }
-                    );
-                }
+                });
+
+                wrap.addEventListener('mouseleave', () => {
+                    gsap.to(inner, {
+                        x: 0,
+                        y: 0,
+                        duration: 0.7,
+                        ease: "elastic.out(1, 0.3)"
+                    });
+                });
             });
         };
 
-        class LoFiTrapEngine {
+        // =====================================================================
+        // SCROLL ARCHITECTURE (Lenis + GSAP ScrollTrigger)
+        // =====================================================================
+        const initScroll = () => {
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Expo.easeOut
+                direction: 'vertical',
+                gestureDirection: 'vertical',
+                smooth: true,
+                smoothTouch: false,
+            });
+
+            lenis.on('scroll', (e) => {
+                State.scrollVelocity = e.velocity;
+                ScrollTrigger.update();
+            });
+
+            gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+            gsap.ticker.lagSmoothing(0);
+
+            // Velocity Skew Effect
+            const skewElements = document.querySelectorAll('.velocity-skew');
+            lenis.on('scroll', () => {
+                const skew = Math.max(-5, Math.min(5, State.scrollVelocity * 0.2));
+                gsap.to(skewElements, { 
+                    skewY: skew, 
+                    duration: 0.1, 
+                    ease: "none",
+                    overwrite: "auto" 
+                });
+            });
+        };
+
+        // =====================================================================
+        // TYPOGRAPHY & ENTRY ANIMATIONS
+        // =====================================================================
+        const initAnimations = () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Split text for hero/titles
+            const titles = document.querySelectorAll('.title-anim');
+            titles.forEach(title => {
+                const type = new SplitType(title, { types: 'words, chars', tagName: 'span' });
+                gsap.set(type.chars, { y: '115%' });
+                
+                ScrollTrigger.create({
+                    trigger: title,
+                    start: "top 90%",
+                    onEnter: () => {
+                        gsap.to(type.chars, {
+                            y: '0%',
+                            duration: 0.8,
+                            stagger: 0.02,
+                            ease: "expo.out"
+                        });
+                    }
+                });
+            });
+
+            // Fade up paras
+            const fadeUps = document.querySelectorAll('.fade-up-anim');
+            fadeUps.forEach(el => {
+                gsap.set(el, { y: 40, opacity: 0 });
+                ScrollTrigger.create({
+                    trigger: el,
+                    start: "top 85%",
+                    onEnter: () => {
+                        gsap.to(el, {
+                            y: 0, opacity: 1, duration: 1, ease: "power3.out"
+                        });
+                    }
+                });
+            });
+        };
+
+        // =====================================================================
+        // KINETIC CANVAS VISUALIZER (Responds to Audio & Mouse)
+        // =====================================================================
+        const initCanvas = () => {
+            const canvas = document.getElementById('visualizer-canvas');
+            const ctx = canvas.getContext('2d', { alpha: false }); // Optimize
+            
+            let width, height;
+            let particles = [];
+            const particleCount = State.isMobile ? 50 : 120;
+
+            const resize = () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            };
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.vx = (Math.random() - 0.5) * 1;
+                    this.vy = (Math.random() - 0.5) * 1;
+                    this.baseSize = Math.random() * 2 + 1;
+                    this.size = this.baseSize;
+                }
+                update() {
+                    // Audio reactivity
+                    this.size = this.baseSize + (State.beatPulse * this.baseSize * 4);
+                    
+                    // Mouse repulsion
+                    const dx = State.mouse.x - this.x;
+                    const dy = State.mouse.y - this.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 200) {
+                        const force = (200 - dist) / 200;
+                        this.vx -= (dx / dist) * force * 0.5;
+                        this.vy -= (dy / dist) * force * 0.5;
+                    }
+
+                    // Audio kick repulsion (Global burst)
+                    if (State.beatPulse > 0.1) {
+                        this.x += this.vx * (State.beatPulse * 10);
+                        this.y += this.vy * (State.beatPulse * 10);
+                    }
+
+                    // Friction & Movement
+                    this.vx *= 0.98;
+                    this.vy *= 0.98;
+                    
+                    // Base drift
+                    this.x += this.vx + (Math.sin(Date.now() * 0.001 + this.y) * 0.2);
+                    this.y += this.vy;
+
+                    // Wrap
+                    if (this.x < 0) this.x = width;
+                    if (this.x > width) this.x = 0;
+                    if (this.y < 0) this.y = height;
+                    if (this.y > height) this.y = 0;
+                }
+                draw() {
+                    ctx.fillStyle = `rgba(176, 38, 255, ${0.2 + (State.beatPulse * 0.5)})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            for(let i=0; i<particleCount; i++) particles.push(new Particle());
+
+            const animate = () => {
+                // Clear with trail effect
+                ctx.fillStyle = 'rgba(3, 3, 3, 0.15)';
+                ctx.fillRect(0, 0, width, height);
+
+                // Draw Connections
+                ctx.strokeStyle = `rgba(176, 38, 255, ${0.05 + State.beatPulse * 0.1})`;
+                ctx.lineWidth = 1;
+                for(let i=0; i<particles.length; i++) {
+                    for(let j=i+1; j<particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if(dist < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                particles.forEach(p => { p.update(); p.draw(); });
+                
+                // Decay beat pulse
+                State.beatPulse *= 0.85;
+
+                requestAnimationFrame(animate);
+            };
+            animate();
+        };
+
+        // =====================================================================
+        // WEB AUDIO API SYNTHESIZER (Generative TRAP/LOFI)
+        // =====================================================================
+        class AudioSystem {
             constructor() {
                 this.ctx = new (window.AudioContext || window.webkitAudioContext)();
                 
-                this.masterCompressor = this.ctx.createDynamicsCompressor();
-                this.masterCompressor.threshold.value = -10;
-                this.masterCompressor.knee.value = 10;
-                this.masterCompressor.ratio.value = 4;
-                this.masterCompressor.attack.value = 0;
-                this.masterCompressor.release.value = 0.25;
+                // Master Bus
+                this.compressor = this.ctx.createDynamicsCompressor();
+                this.compressor.threshold.value = -12;
+                this.compressor.knee.value = 10;
+                this.compressor.ratio.value = 4;
+                this.compressor.attack.value = 0.01;
+                this.compressor.release.value = 0.25;
 
                 this.masterGain = this.ctx.createGain();
-                this.masterGain.gain.value = 0;
+                this.masterGain.gain.value = 0; // Start muted
 
-                this.analyser = this.ctx.createAnalyser();
-                this.analyser.fftSize = 256;
-                this.analyser.smoothingTimeConstant = 0.7;
-                state.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
-                state.analyser = this.analyser;
+                this.compressor.connect(this.masterGain);
+                this.masterGain.connect(this.ctx.destination);
 
-                this.masterCompressor.connect(this.masterGain);
-                this.masterGain.connect(this.analyser);
-                this.analyser.connect(this.ctx.destination);
-
-                this.isPlaying = false;
-                this.tempo = 75;
-                this.lookahead = 25;
-                this.scheduleAheadTime = 0.1;
+                // Sequencer State
+                this.tempo = 70; // BPM
                 this.nextNoteTime = 0.0;
-                this.current16thNote = 0;
+                this.current16th = 0;
                 this.timerID = null;
 
-                this.noiseBuffer = this.createNoiseBuffer();
-                this.padNodes = [];
-                
-                // CHORD PROGRESSION: i - VI - III - VII (Cm - Ab - Eb - Bb)
-                this.chords = [
-                    [65.41, 77.78, 98.00],   // Cm (C2, Eb2, G2)
-                    [51.91, 65.41, 77.78],   // Ab (Ab1, C2, Eb2)
-                    [77.78, 98.00, 116.54],  // Eb (Eb2, G2, Bb2)
-                    [58.27, 73.42, 87.31]    // Bb (Bb1, D2, F2)
-                ];
-                this.currentChordIndex = 0;
-                this.oscillators = [];
+                // Noise buffer for hats/snares
+                const bufferSize = this.ctx.sampleRate * 2;
+                this.noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const output = this.noiseBuffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+
+                // Drone Pad
+                this.initDrone();
             }
 
-            createNoiseBuffer() {
-                const bufferSize = this.ctx.sampleRate * 2;
-                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-                const output = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) { output[i] = Math.random() * 2 - 1; }
-                return buffer;
+            initDrone() {
+                const rootFreq = 65.41; // C2
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 300;
+                
+                const droneGain = this.ctx.createGain();
+                droneGain.gain.value = 0.2;
+                filter.connect(droneGain);
+                droneGain.connect(this.compressor);
+
+                [rootFreq, rootFreq * 1.5].forEach(freq => {
+                    const osc = this.ctx.createOscillator();
+                    osc.type = 'sawtooth';
+                    osc.frequency.value = freq + (Math.random() - 0.5);
+                    osc.connect(filter);
+                    osc.start();
+                });
+
+                // LFO for drone breathing
+                const lfo = this.ctx.createOscillator();
+                lfo.frequency.value = 0.1;
+                const lfoGain = this.ctx.createGain();
+                lfoGain.gain.value = 100;
+                lfo.connect(lfoGain);
+                lfoGain.connect(filter.frequency);
+                lfo.start();
             }
 
             playKick(time) {
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.connect(gain);
-                gain.connect(this.masterCompressor);
+                gain.connect(this.compressor);
 
-                osc.frequency.setValueAtTime(120, time);
+                // Pitch envelope (808 style)
+                osc.frequency.setValueAtTime(150, time);
                 osc.frequency.exponentialRampToValueAtTime(40, time + 0.1);
                 
-                gain.gain.setValueAtTime(1.5, time);
+                // Amp envelope
+                gain.gain.setValueAtTime(1.2, time);
                 gain.gain.exponentialRampToValueAtTime(0.01, time + 0.8);
 
                 osc.start(time);
                 osc.stop(time + 1.0);
 
-                setTimeout(() => { state.kickPulse = 1.0; }, (time - this.ctx.currentTime) * 1000);
+                // Sync Visuals (trigger slightly ahead to match audio buffer)
+                setTimeout(() => { State.beatPulse = 1.0; }, (time - this.ctx.currentTime) * 1000);
             }
 
-            playHat(time, velocity = 0.5) {
-                const noiseSrc = this.ctx.createBufferSource();
-                noiseSrc.buffer = this.noiseBuffer;
-                
+            playHat(time, vel) {
+                const src = this.ctx.createBufferSource();
+                src.buffer = this.noiseBuffer;
                 const filter = this.ctx.createBiquadFilter();
-                filter.type = 'highpass';
-                filter.frequency.value = 6000;
-
+                filter.type = 'highpass'; filter.frequency.value = 7000;
                 const gain = this.ctx.createGain();
-                gain.gain.setValueAtTime(velocity, time);
+                
+                gain.gain.setValueAtTime(vel, time);
                 gain.gain.exponentialRampToValueAtTime(0.01, time + 0.05);
 
-                noiseSrc.connect(filter);
-                filter.connect(gain);
-                gain.connect(this.masterCompressor);
-
-                noiseSrc.start(time);
-                noiseSrc.stop(time + 0.1);
+                src.connect(filter); filter.connect(gain); gain.connect(this.compressor);
+                src.start(time); src.stop(time + 0.1);
             }
 
-            playSnare(time) {
-                const noiseSrc = this.ctx.createBufferSource();
-                noiseSrc.buffer = this.noiseBuffer;
-                const filter = this.ctx.createBiquadFilter();
-                filter.type = 'bandpass';
-                filter.frequency.value = 1500;
-                const noiseGain = this.ctx.createGain();
-                noiseGain.gain.setValueAtTime(0.8, time);
-                noiseGain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
-                
-                const osc = this.ctx.createOscillator();
-                osc.type = 'triangle';
-                const oscGain = this.ctx.createGain();
-                osc.frequency.setValueAtTime(250, time);
-                oscGain.gain.setValueAtTime(0.5, time);
-                oscGain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+            schedule() {
+                while (this.nextNoteTime < this.ctx.currentTime + 0.1) {
+                    const t = this.nextNoteTime;
+                    const step = this.current16th;
 
-                noiseSrc.connect(filter); filter.connect(noiseGain); noiseGain.connect(this.masterCompressor);
-                osc.connect(oscGain); oscGain.connect(this.masterCompressor);
-
-                noiseSrc.start(time); osc.start(time);
-                noiseSrc.stop(time + 0.2); osc.stop(time + 0.2);
-            }
-
-            startPad() {
-                const filter = this.ctx.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.value = 400;
-
-                const lfo = this.ctx.createOscillator();
-                lfo.frequency.value = 0.2;
-                const lfoGain = this.ctx.createGain();
-                lfoGain.gain.value = 200;
-                lfo.connect(lfoGain);
-                lfoGain.connect(filter.frequency);
-                lfo.start();
-                this.padNodes.push(lfo, lfoGain, filter);
-
-                const padMasterGain = this.ctx.createGain();
-                padMasterGain.gain.value = 0.3;
-                filter.connect(padMasterGain);
-                padMasterGain.connect(this.masterCompressor);
-                this.padNodes.push(padMasterGain);
-
-                const freqs = this.chords[this.currentChordIndex];
-                freqs.forEach((freq) => {
-                    const osc = this.ctx.createOscillator();
-                    osc.type = 'sawtooth';
-                    osc.frequency.value = freq;
-                    osc.detune.value = (Math.random() - 0.5) * 8;
-                    osc.connect(filter);
-                    osc.start();
-                    this.oscillators.push(osc);
-                    this.padNodes.push(osc);
-                });
-            }
-
-            changeChord() {
-                this.currentChordIndex = (this.currentChordIndex + 1) % this.chords.length;
-                const newFreqs = this.chords[this.currentChordIndex];
-                
-                this.oscillators.forEach((osc, i) => {
-                    if(newFreqs[i]) {
-                        osc.frequency.setTargetAtTime(newFreqs[i], this.ctx.currentTime, 0.15);
-                    }
-                });
-                
-                this.playSubBass(newFreqs[0]);
-            }
-            
-            playSubBass(freq) {
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.value = freq / 2;
-                
-                gain.gain.setValueAtTime(0.9, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.6);
-                
-                osc.connect(gain);
-                gain.connect(this.masterCompressor);
-                osc.start();
-                osc.stop(this.ctx.currentTime + 0.6);
-            }
-
-            scheduleNote(beatNumber, time) {
-                if (beatNumber === 0 || beatNumber === 10) { this.playKick(time); }
-                if (beatNumber === 4 || beatNumber === 12) { this.playSnare(time); }
-                
-                const isDownbeat = beatNumber % 4 === 0;
-                const isOffbeat = beatNumber % 2 !== 0;
-                let vel = 0.2;
-                if(isDownbeat) vel = 0.4;
-                if(isOffbeat) vel = 0.1;
-                this.playHat(time, vel);
-            }
-
-            nextNote() {
-                const secondsPerBeat = 60.0 / this.tempo;
-                this.nextNoteTime += 0.25 * secondsPerBeat;
-                this.current16thNote++;
-                if (this.current16thNote === 16) { this.current16thNote = 0; }
-            }
-
-            scheduler = () => {
-                while (this.nextNoteTime < this.ctx.currentTime + this.scheduleAheadTime) {
-                    if (this.current16thNote === 0 && this.nextNoteTime > this.ctx.currentTime) {
-                        this.changeChord();
-                    }
+                    // Kick: 1 and 2.5
+                    if (step === 0 || step === 10) this.playKick(t);
                     
-                    this.scheduleNote(this.current16thNote, this.nextNoteTime);
-                    this.nextNote();
+                    // Hats: 16ths with velocity groove
+                    let hatVel = step % 4 === 0 ? 0.3 : 0.1;
+                    if (step % 2 !== 0) hatVel = 0.05; // offbeats quieter
+                    this.playHat(t, hatVel);
+
+                    // Advance time
+                    const secondsPerBeat = 60.0 / this.tempo;
+                    this.nextNoteTime += 0.25 * secondsPerBeat;
+                    this.current16th = (this.current16th + 1) % 16;
                 }
-                this.timerID = setTimeout(this.scheduler, this.lookahead);
+                this.timerID = requestAnimationFrame(() => this.schedule());
             }
 
             start() {
                 if (this.ctx.state === 'suspended') this.ctx.resume();
-                this.isPlaying = true;
-                this.current16thNote = 0;
+                this.masterGain.gain.setTargetAtTime(1, this.ctx.currentTime, 1); // Fade in
                 this.nextNoteTime = this.ctx.currentTime + 0.1;
-                this.masterGain.gain.setTargetAtTime(1.0, this.ctx.currentTime, 0.5);
-                this.startPad();
-                this.scheduler();
+                this.schedule();
             }
 
             stop() {
-                this.isPlaying = false;
-                this.masterGain.gain.setTargetAtTime(0, this.ctx.currentTime, 1.0);
-                clearTimeout(this.timerID);
-                setTimeout(() => {
-                    this.padNodes.forEach(n => { if(n.stop) n.stop(); if(n.disconnect) n.disconnect(); });
-                    this.padNodes = [];
-                    this.oscillators = [];
-                }, 1500);
+                this.masterGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.5); // Fade out
+                setTimeout(() => cancelAnimationFrame(this.timerID), 500);
             }
         }
 
-        let audioEngine;
+        let audioEngine = null;
 
-        document.getElementById('audio-toggle').addEventListener('click', (e) => {
-            const btn = e.currentTarget;
+        const initAudioUI = () => {
+            const btn = document.getElementById('audio-toggle');
             const status = document.getElementById('audio-status');
             const indicator = document.getElementById('audio-indicator');
-            
-            if (!audioEngine) audioEngine = new LoFiTrapEngine();
 
-            if (!audioEngine.isPlaying) {
-                audioEngine.start();
-                btn.setAttribute('aria-pressed', 'true');
-                status.innerText = "SOUND ON";
-                indicator.classList.replace('bg-white/20', 'bg-neon');
-                indicator.classList.add('shadow-[0_0_15px_rgba(176,38,255,1)]');
-            } else {
-                audioEngine.stop();
-                btn.setAttribute('aria-pressed', 'false');
-                status.innerText = "SOUND OFF";
-                indicator.classList.replace('bg-neon', 'bg-white/20');
-                indicator.classList.remove('shadow-[0_0_15px_rgba(176,38,255,1)]');
-            }
-        });
-
-        const modal = document.getElementById('contact-modal');
-        const mainContent = document.getElementById('main-content');
-        const mainNav = document.getElementById('main-nav');
-        const openBtns = [document.getElementById('open-contact-nav'), document.getElementById('open-contact-main')];
-        const closeBtn = document.getElementById('close-contact');
-        const form = document.getElementById('contact-form');
-
-        const openModal = () => {
-            modal.showModal(); lenis.stop(); 
-            mainContent.setAttribute('aria-hidden', 'true'); mainNav.setAttribute('aria-hidden', 'true');
-        };
-
-        const closeModal = () => {
-            modal.setAttribute('closing', '');
-            modal.addEventListener('animationend', () => {
-                modal.removeAttribute('closing'); modal.close(); lenis.start(); 
-                mainContent.removeAttribute('aria-hidden'); mainNav.removeAttribute('aria-hidden');
-            }, { once: true });
-        };
-
-        openBtns.forEach(btn => btn.addEventListener('click', openModal));
-        closeBtn.addEventListener('click', closeModal);
-        
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if(!form.checkValidity()) { form.reportValidity(); return; }
-            const btn = e.target.querySelector('button[type="submit"]');
-            const originalText = btn.innerText;
-            btn.innerText = "TRANSMISSION SUCCESS"; btn.classList.replace('bg-neon', 'bg-white'); btn.disabled = true;
-            setTimeout(() => {
-                closeModal();
-                setTimeout(() => { btn.innerText = originalText; btn.classList.replace('bg-white', 'bg-neon'); btn.disabled = false; form.reset(); }, 500);
-            }, 1500);
-        });
-
-        const initWebGL = () => {
-            const container = document.getElementById('webgl-container');
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-            const baseZ = state.isMobile ? 35 : 22; 
-            camera.position.set(0, 5, baseZ);
-
-            const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: "high-performance" });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); 
-            container.appendChild(renderer.domElement);
-
-            const gridSize = state.isMobile ? 70 : 130; 
-            const geometry = new THREE.BufferGeometry();
-            const totalVertices = gridSize * gridSize;
-            const positions = new Float32Array(totalVertices * 3);
-
-            let idx = 0;
-            const spread = 80.0;
-            for (let i = 0; i < gridSize; i++) {
-                for (let j = 0; j < gridSize; j++) {
-                    positions[idx++] = (i / (gridSize - 1)) * spread - (spread / 2);
-                    positions[idx++] = 0;
-                    positions[idx++] = (j / (gridSize - 1)) * spread - (spread / 2);
+            btn.addEventListener('click', () => {
+                if (!audioEngine) audioEngine = new AudioSystem();
+                
+                State.audioPlaying = !State.audioPlaying;
+                
+                if (State.audioPlaying) {
+                    audioEngine.start();
+                    status.innerText = "SOUND ON";
+                    indicator.classList.remove('bg-white/30');
+                    indicator.classList.add('bg-neon', 'shadow-[0_0_10px_#b026ff]');
+                } else {
+                    audioEngine.stop();
+                    status.innerText = "SOUND OFF";
+                    indicator.classList.add('bg-white/30');
+                    indicator.classList.remove('bg-neon', 'shadow-[0_0_10px_#b026ff]');
                 }
-            }
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-            const material = new THREE.ShaderMaterial({
-                uniforms: {
-                    u_time: { value: 0 },
-                    u_kick: { value: 0 },
-                    u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
-                },
-                vertexShader: `
-                    uniform float u_time;
-                    uniform float u_kick;
-                    varying float vDepth;
-                    varying float vGlow;
-
-                    void main() {
-                        vec3 pos = position;
-                        float distSq = pos.x * pos.x + pos.z * pos.z;
-                        
-                        float baseline = 15.0 * exp(-distSq / 400.0) - 10.0;
-                        
-                        float shockwave = sin(sqrt(distSq) * 0.5 - u_time * 8.0) * exp(-distSq * 0.005) * (u_kick * 6.0);
-                        
-                        pos.y = baseline + shockwave;
-                        
-                        vDepth = pos.y;
-                        vGlow = u_kick * exp(-distSq * 0.002);
-
-                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-                        gl_Position = projectionMatrix * mvPosition;
-                        
-                        gl_PointSize = (3.0 + (vGlow * 12.0)) * (25.0 / -mvPosition.z);
-                    }
-                `,
-                fragmentShader: `
-                    varying float vDepth;
-                    varying float vGlow;
-
-                    void main() {
-                        vec2 xy = gl_PointCoord.xy - vec2(0.5);
-                        float ll = length(xy);
-                        if(ll > 0.5) discard;
-
-                        float alpha = smoothstep(0.5, 0.45, ll);
-
-                        vec3 voidColor = vec3(0.05, 0.0, 0.08);
-                        vec3 neonColor = vec3(0.69, 0.15, 1.0);
-                        vec3 whiteHot = vec3(1.0, 1.0, 1.0);
-                        
-                        vec3 baseColor = mix(voidColor, neonColor, clamp(vDepth * 0.1 + 0.5, 0.0, 1.0));
-                        vec3 finalColor = mix(baseColor, whiteHot, vGlow);
-                        
-                        float depthFade = smoothstep(-15.0, 5.0, vDepth);
-                        gl_FragColor = vec4(finalColor, alpha * depthFade);
-                    }
-                `,
-                transparent: true, depthWrite: false, blending: THREE.AdditiveBlending 
             });
-
-            const points = new THREE.Points(geometry, material);
-            scene.add(points);
-
-            window.addEventListener('resize', () => {
-                const width = window.innerWidth; const height = window.innerHeight;
-                camera.aspect = width / height;
-                camera.fov = width < 768 ? 65 : 55;
-                camera.position.z = width < 768 ? 35 : 22;
-                camera.updateProjectionMatrix();
-                renderer.setSize(width, height);
-                material.uniforms.u_resolution.value.set(width, height);
-            }, { passive: true });
-
-            const clock = new THREE.Clock();
-
-            const render = () => {
-                const elapsedTime = clock.getElapsedTime();
-                material.uniforms.u_time.value = elapsedTime;
-
-                state.kickPulse = Math.max(0, state.kickPulse - 0.03);
-                material.uniforms.u_kick.value = state.kickPulse;
-
-                scene.rotation.x = 0.2 + Math.sin(elapsedTime * 0.1) * 0.05; 
-                scene.rotation.y = elapsedTime * 0.05;
-
-                const camY = 5 + (state.scrollProgress * 25);
-                const camZ = baseZ - (state.scrollProgress * 35); 
-                camera.position.y = camY;
-                camera.position.z = camZ;
-                camera.lookAt(0, 5, 0);
-
-                renderer.render(scene, camera);
-                requestAnimationFrame(render);
-            };
-
-            render();
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            document.fonts.ready.then(() => {
-                initHeroAnimation();
-                initScrollJourney();
-                initWebGL();
+        // =====================================================================
+        // MODAL LOGIC (GSAP Timeline)
+        // =====================================================================
+        const initModals = () => {
+            const modal = document.getElementById('contact-modal');
+            const openBtns = [document.getElementById('nav-contact-btn'), document.getElementById('initiate-btn')];
+            const closeBtn = document.getElementById('close-contact-btn');
+
+            let tl = gsap.timeline({ paused: true });
+            
+            tl.set(modal, { visibility: 'visible' })
+              .to(modal, {
+                  clipPath: 'circle(150% at 50% 50%)',
+                  opacity: 1,
+                  duration: 0.8,
+                  ease: "power3.inOut"
+              })
+              .fromTo(modal.querySelectorAll('.input-line, h2, p, button[type="submit"]'), 
+                  { y: 30, opacity: 0 }, 
+                  { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: "power2.out" }, 
+                  "-=0.3"
+              );
+
+            openBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    modal.classList.add('active');
+                    tl.play();
+                });
             });
+
+            closeBtn.addEventListener('click', () => {
+                tl.reverse().then(() => modal.classList.remove('active'));
+            });
+        };
+
+        // =====================================================================
+        // BOOTSTRAP / LOADER SEQUENCE
+        // =====================================================================
+        window.addEventListener('load', () => {
+            // Loader Timeline
+            const tl = gsap.timeline();
+            
+            tl.to('.loader-bar', { width: '100%', duration: 1.2, ease: "power3.inOut" })
+              .to('.loader-text', { opacity: 0, duration: 0.3 }, "-=0.2")
+              .to('#loader', { height: 0, duration: 0.8, ease: "expo.inOut" })
+              .set('#loader', { display: 'none' })
+              .call(() => {
+                  // Init systems post-load to prevent jank
+                  initCursor();
+                  initMagneticUI();
+                  initScroll();
+                  initAnimations();
+                  initCanvas();
+                  initAudioUI();
+                  initModals();
+                  
+                  // Trigger initial scroll update
+                  ScrollTrigger.refresh();
+              });
         });
     </script>
 </body>

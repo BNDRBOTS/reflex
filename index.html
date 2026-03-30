@@ -14,8 +14,8 @@
 
         :root {
             --obsidian: #030303;
-            --amber: #ffaa00; 
-            --amber-glow: rgba(255, 170, 0, 0.4);
+            --teal: #00e5ff; 
+            --teal-glow: rgba(0, 229, 255, 0.4);
             --white: #ffffff;
             --chrome: #a1a1aa;
             --surface: rgba(255, 255, 255, 0.03);
@@ -25,7 +25,7 @@
         * { cursor: none !important; margin: 0; padding: 0; box-sizing: border-box; }
 
         *:focus-visible {
-            outline: 1px solid var(--amber);
+            outline: 1px solid var(--teal);
             outline-offset: 4px;
         }
 
@@ -68,11 +68,11 @@
             left: 0;
             width: 6px;
             height: 6px;
-            background: var(--amber);
+            background: var(--teal);
             border-radius: 50%;
             pointer-events: none;
             z-index: 10000;
-            box-shadow: 0 0 10px var(--amber), 0 0 20px var(--amber);
+            box-shadow: 0 0 10px var(--teal), 0 0 20px var(--teal);
             transform: translate(-50%, -50%);
             transition: width 0.2s, height 0.2s, background-color 0.2s;
         }
@@ -80,8 +80,8 @@
         .custom-cursor.hover-active {
             width: 40px;
             height: 40px;
-            background: rgba(255, 170, 0, 0.1);
-            border: 1px solid var(--amber);
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid var(--teal);
             mix-blend-mode: difference;
         }
 
@@ -91,7 +91,7 @@
             left: 0;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, var(--amber-glow) 0%, transparent 60%);
+            background: radial-gradient(circle, var(--teal-glow) 0%, transparent 60%);
             pointer-events: none;
             z-index: 0;
             transform: translate(-50%, -50%);
@@ -126,9 +126,9 @@
         }
 
         .menu-btn:hover, .menu-btn:focus {
-            border-color: var(--amber);
-            color: var(--amber);
-            box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
+            border-color: var(--teal);
+            color: var(--teal);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
         }
 
         /* Pop-out Navigation */
@@ -173,7 +173,7 @@
             top: 50%;
             width: 0;
             height: 2px;
-            background: var(--amber);
+            background: var(--teal);
             transition: width 0.3s ease;
             transform: translateY(-50%);
         }
@@ -192,7 +192,7 @@
             font-size: 0.6rem;
             text-transform: uppercase;
             letter-spacing: 0.3em;
-            color: var(--amber);
+            color: var(--teal);
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -205,7 +205,7 @@
             display: block;
             width: 24px;
             height: 1px;
-            background: var(--amber);
+            background: var(--teal);
         }
 
         .heading-refined {
@@ -218,8 +218,12 @@
         }
 
         .accent-glow {
-            color: var(--amber);
-            text-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+            color: var(--teal);
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+        }
+        
+        .text-teal {
+            color: var(--teal);
         }
 
         .body-text {
@@ -270,8 +274,8 @@
         }
 
         .glass-card:hover {
-            border-color: rgba(255, 170, 0, 0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,170,0,0.05);
+            border-color: rgba(0, 229, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,229,255,0.05);
         }
 
         .list-item-accent {
@@ -289,7 +293,7 @@
 
         .list-item-accent:last-child { border-bottom: none; }
         .list-item-accent:hover { color: var(--white); }
-        .list-item-accent:hover .dot { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+        .list-item-accent:hover .dot { background: var(--teal); box-shadow: 0 0 10px var(--teal); }
 
         .dot {
             width: 6px;
@@ -353,7 +357,7 @@
             position: relative;
         }
 
-        .footer-link:hover { color: var(--amber); }
+        .footer-link:hover { color: var(--teal); }
 
         .footer-bottom {
             display: flex;
@@ -380,7 +384,7 @@
             letter-spacing: 0.1em;
             transition: color 0.2s ease;
         }
-        .legal-btn:hover { color: var(--amber); }
+        .legal-btn:hover { color: var(--teal); }
 
         /* Modals */
         .modal {
@@ -479,7 +483,7 @@
                             
                             <!-- Falling Mic Payload -->
                             <g id="mic-group" transform="translate(595, -100)">
-                                <rect x="-5" y="0" width="10" height="30" fill="var(--amber)" filter="url(#glow)"/>
+                                <rect x="-5" y="0" width="10" height="30" fill="var(--teal)" filter="url(#glow)"/>
                                 <path d="M-8,-8 H8 V4 H-8 Z" fill="#222" />
                                 <circle cx="0" cy="-10" r="8" fill="url(#chromeGrad)" />
                             </g>
@@ -510,7 +514,7 @@
                 <div>
                     <div class="section-tag">Stage 03 / Operations</div>
                     <div class="glass-card mt-6">
-                        <div class="footer-label text-amber" id="services-title">Capabilities</div>
+                        <div class="footer-label text-teal" id="services-title">Capabilities</div>
                         <ul class="mt-6" role="list">
                             <li class="list-item-accent interactive">
                                 <span class="dot"></span> Live Audio Engineering
@@ -686,9 +690,9 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
-        const amberLight = new THREE.PointLight(0xffaa00, 8, 40);
-        amberLight.position.set(5, 5, 5);
-        scene.add(amberLight);
+        const tealLight = new THREE.PointLight(0x00e5ff, 8, 40);
+        tealLight.position.set(5, 5, 5);
+        scene.add(tealLight);
 
         const fillLight = new THREE.DirectionalLight(0xffffff, 0.2);
         fillLight.position.set(-5, 0, 5);
@@ -705,7 +709,7 @@
 
         // Add structural glowing accent lines to the monolith
         const edges = new THREE.EdgesGeometry(monolithGeo);
-        const lineMat = new THREE.LineBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.5 });
+        const lineMat = new THREE.LineBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.5 });
         const wireframe = new THREE.LineSegments(edges, lineMat);
         monolith.add(wireframe);
 
@@ -719,7 +723,7 @@
             
             // Pulse the accent lines
             gsap.fromTo(lineMat, { opacity: 1 }, { opacity: 0.5, duration: 0.4 });
-            gsap.fromTo(amberLight, { intensity: 15 }, { intensity: 8, duration: 0.4 });
+            gsap.fromTo(tealLight, { intensity: 15 }, { intensity: 8, duration: 0.4 });
         });
 
         function animate() {
@@ -728,8 +732,8 @@
             monolith.rotation.x = mouseY * 0.15;
             monolith.position.x = mouseX * 2;
             
-            amberLight.position.x = mouseX * 15;
-            amberLight.position.y = -mouseY * 15;
+            tealLight.position.x = mouseX * 15;
+            tealLight.position.y = -mouseY * 15;
             
             renderer.render(scene, camera);
         }
@@ -752,7 +756,7 @@
             });
 
             micTl.to(mic, { y: 155, ease: "none" })
-                 .to(hand, { strokeWidth: 4, stroke: "#ffaa00", scale: 1.05, transformOrigin: "center" }, "<");
+                 .to(hand, { strokeWidth: 4, stroke: "#00e5ff", scale: 1.05, transformOrigin: "center" }, "<");
 
             // 2. Journey Transitions for 3D Environment
             gsap.to(camera.position, { 

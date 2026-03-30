@@ -266,16 +266,61 @@
 
         /* Content Cards */
         .glass-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
             padding: 40px;
-            backdrop-filter: blur(10px);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(24px) saturate(120%);
+            -webkit-backdrop-filter: blur(24px) saturate(120%);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.7s ease;
+        }
+
+        .glass-card:hover::after {
+            left: 200%;
         }
 
         .glass-card:hover {
-            border-color: rgba(0, 229, 255, 0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,229,255,0.05);
+            border-color: rgba(0, 229, 255, 0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,229,255,0.15);
+            transform: translateY(-4px);
+        }
+
+        /* Micro Accents */
+        .accent-cross {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .accent-cross::before, .accent-cross::after {
+            content: '';
+            position: absolute;
+            background: var(--teal);
+        }
+        .accent-cross::before { top: 50%; left: 0; width: 100%; height: 1px; transform: translateY(-50%); }
+        .accent-cross::after { left: 50%; top: 0; height: 100%; width: 1px; transform: translateX(-50%); }
+
+        .data-point {
+            font-size: 0.5rem;
+            letter-spacing: 0.3em;
+            color: var(--chrome);
+            position: absolute;
+            text-transform: uppercase;
+            pointer-events: none;
         }
 
         .list-item-accent {
@@ -499,6 +544,9 @@
 
         <!-- POWER & REVERB -->
         <section class="journey-step justify-end" id="step-2" aria-labelledby="power-title">
+            <div class="accent-cross" style="top: 20%; right: 10%;"></div>
+            <div class="data-point" style="bottom: 20%; right: 10%;">PWR-ON</div>
+
             <div class="max-w-xl text-right">
                 <div class="section-tag justify-end">Stage 02 / Output</div>
                 <h2 class="heading-refined" id="power-title">Precision <br> <span class="accent-glow">Control</span></h2>
@@ -510,10 +558,15 @@
 
         <!-- REFINED SERVICES -->
         <section class="journey-step" id="step-3" aria-labelledby="services-title">
+            <div class="accent-cross" style="top: 10%; left: 5%;"></div>
+            <div class="accent-cross" style="bottom: 10%; right: 5%;"></div>
+            <div class="data-point" style="top: 12%; left: 5%;">SEC-03</div>
+
             <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                 <div>
                     <div class="section-tag">Stage 03 / Operations</div>
                     <div class="glass-card mt-6">
+                        <div class="accent-cross" style="top: 10px; right: 10px; opacity: 0.5;"></div>
                         <div class="footer-label text-teal" id="services-title">Capabilities</div>
                         <ul class="mt-6" role="list">
                             <li class="list-item-accent interactive">
@@ -539,6 +592,9 @@
 
         <!-- CLEAN CONTACT -->
         <section class="journey-step flex-col items-center justify-center text-center" id="step-4" aria-labelledby="contact-title">
+            <div class="accent-cross" style="top: 15%; left: 15%;"></div>
+            <div class="data-point" style="bottom: 15%; left: 15%;">FIN-04</div>
+            
             <div class="w-full max-w-2xl">
                 <div class="section-tag justify-center">Stage 04 / Secure</div>
                 <h2 class="heading-refined mb-10" id="contact-title">Initiate <br> Booking</h2>
@@ -698,12 +754,28 @@
         fillLight.position.set(-5, 0, 5);
         scene.add(fillLight);
 
-        // Core Glass Monolith
+        // Environment map for true glass reflection
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        pmremGenerator.compileEquirectangularShader();
+        const envScene = new THREE.Scene();
+        envScene.background = new THREE.Color(0x00e5ff);
+        const envMap = pmremGenerator.fromScene(envScene).texture;
+
+        // Core Glass Monolith - Upgraded to true glass physics
         const monolithGeo = new THREE.BoxGeometry(3.5, 6, 0.4);
         const monolithMat = new THREE.MeshPhysicalMaterial({
-            color: 0x111111, metalness: 0.9, roughness: 0.1,
-            transmission: 0.9, thickness: 1, transparent: true, opacity: 0.4,
-            clearcoat: 1.0, clearcoatRoughness: 0.1
+            color: 0x050505, 
+            metalness: 0.2, 
+            roughness: 0.05,
+            transmission: 1.0, 
+            thickness: 2.5, 
+            transparent: true, 
+            opacity: 1.0,
+            clearcoat: 1.0, 
+            clearcoatRoughness: 0.1,
+            ior: 1.5,
+            envMap: envMap,
+            envMapIntensity: 1.5
         });
         const monolith = new THREE.Mesh(monolithGeo, monolithMat);
 
@@ -713,7 +785,11 @@
         const wireframe = new THREE.LineSegments(edges, lineMat);
         monolith.add(wireframe);
 
-        scene.add(monolith);
+        // Group to separate scroll rotation from mouse reflex rotation
+        const monolithGroup = new THREE.Group();
+        monolithGroup.add(monolith);
+        scene.add(monolithGroup);
+        
         camera.position.z = 10;
 
         // Sub-kick structural effect on mousedown
@@ -728,9 +804,13 @@
 
         function animate() {
             requestAnimationFrame(animate);
-            monolith.rotation.y += 0.002;
-            monolith.rotation.x = mouseY * 0.15;
-            monolith.position.x = mouseX * 2;
+            
+            // Smoother, heavier rotation for the tactile reflex effect
+            monolith.rotation.y += (mouseX * 0.8 - monolith.rotation.y) * 0.05;
+            monolith.rotation.x += (mouseY * 0.8 - monolith.rotation.x) * 0.05;
+            
+            // Subtle heavy floating effect
+            monolithGroup.position.y = Math.sin(Date.now() * 0.001) * 0.1;
             
             tealLight.position.x = mouseX * 15;
             tealLight.position.y = -mouseY * 15;
@@ -764,22 +844,22 @@
                 scrollTrigger: { trigger: "#step-1", start: "top top", end: "bottom top", scrub: 1 }
             });
 
-            gsap.to(monolith.rotation, { 
+            gsap.to(monolithGroup.rotation, { 
                 y: Math.PI * 2, 
                 scrollTrigger: { trigger: "#scroll-container", start: "top top", end: "bottom bottom", scrub: 2 }
             });
 
-            gsap.to(monolith.position, { 
+            gsap.to(monolithGroup.position, { 
                 x: -6, z: -2,
                 scrollTrigger: { trigger: "#step-2", start: "top center", end: "bottom top", scrub: 1 }
             });
 
-            gsap.to(monolith.position, { 
+            gsap.to(monolithGroup.position, { 
                 x: 6, z: -2,
                 scrollTrigger: { trigger: "#step-3", start: "top center", end: "bottom top", scrub: 1 }
             });
 
-            gsap.to(monolith.position, { 
+            gsap.to(monolithGroup.position, { 
                 x: 0, z: -4, 
                 scrollTrigger: { trigger: "#step-4", start: "top bottom", end: "center center", scrub: 1 }
             });

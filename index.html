@@ -1,853 +1,796 @@
 <!DOCTYPE html>
-<html lang="en" class="antialiased bg-black text-white">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Premium sound and flawless execution for Phoenix events.">
-    <title>Reflex Entertainment | Premium Sound</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { 
-                        sans: ['Manrope', 'sans-serif'],
-                        display: ['"Archivo Black"', 'sans-serif']
-                    },
-                    colors: { 
-                        void: '#000000',
-                        neon: '#b026ff',
-                    },
-                    letterSpacing: {
-                        tighter: '-0.04em',
-                        widest: '0.2em',
-                    }
-                }
-            }
-        }
-    </script>
-
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REFLEX™ | Phoenix Professional Audio & DJ</title>
+    <meta name="description" content="Phoenix's premier pro audio and DJ service. Reflex Entertainment delivers high-fidelity sound for luxury events, private parties, and live stages.">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+
         :root {
-            --cursor-size: 12px;
-            --cx: 50vw;
-            --cy: 50vh;
+            --obsidian: #030303;
+            --amber: #ffaa00; 
+            --amber-glow: rgba(255, 170, 0, 0.4);
+            --white: #ffffff;
+            --chrome: #a1a1aa;
+            --surface: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { cursor: none !important; margin: 0; padding: 0; box-sizing: border-box; }
+
+        *:focus-visible {
+            outline: 1px solid var(--amber);
+            outline-offset: 4px;
+        }
+
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            background-color: #000000;
-            color: #ffffff;
+            background-color: var(--obsidian);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        .no-select { user-select: none; -webkit-user-select: none; }
-        .text-balance { text-wrap: balance; }
-
-        @media (pointer: fine) { body { cursor: none; } }
-
-        html.lenis, html.lenis body { height: auto; }
-        .lenis.lenis-smooth { scroll-behavior: auto; }
-        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-        .lenis.lenis-stopped { overflow: hidden; }
-        ::-webkit-scrollbar { display: none; }
-        * { -ms-overflow-style: none; scrollbar-width: none; }
-
-        #webgl-container {
+        /* Hardware Accelerated Overlays */
+        canvas {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
+            top: 0;
+            left: 0;
             z-index: 1;
             pointer-events: none;
-            mix-blend-mode: screen;
         }
 
-        #strike-layer {
+        .interface {
+            position: relative;
+            z-index: 10;
+            pointer-events: none; /* Let clicks pass through to background if needed */
+        }
+
+        .interface section, .interface footer {
+            pointer-events: auto; /* Re-enable clicks for actual content */
+        }
+
+        /* Zero Latency Cursor */
+        .custom-cursor {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: 0;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--amber);
+            border-radius: 50%;
             pointer-events: none;
-            overflow: hidden;
-        }
-        .strike-beam {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, #b026ff, transparent);
-            transform: rotate(-35deg);
-            opacity: 0.3;
-            filter: blur(8px);
-        }
-        .strike-glow {
-            position: absolute;
-            background: radial-gradient(circle, #b026ff 0%, transparent 60%);
-            opacity: 0.1;
-            mix-blend-mode: screen;
-        }
-
-        .ui-layer { position: relative; z-index: 10; }
-
-        *:focus-visible { outline: 3px solid #b026ff; outline-offset: 4px; border-radius: 0px; }
-
-        dialog::backdrop {
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-        dialog[open] { animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(1.05); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        #custom-cursor {
-            position: fixed;
-            top: 0; left: 0;
-            width: var(--cursor-size);
-            height: var(--cursor-size);
-            background: #b026ff;
-            border-radius: 0;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate3d(var(--cx), var(--cy), 0) translate(-50%, -50%) rotate(45deg);
+            z-index: 10000;
+            box-shadow: 0 0 10px var(--amber), 0 0 20px var(--amber);
+            transform: translate(-50%, -50%);
             transition: width 0.2s, height 0.2s, background-color 0.2s;
-            mix-blend-mode: screen;
-            display: none;
-            will-change: transform, width, height;
-        }
-        @media (pointer: fine) { #custom-cursor { display: block; } }
-        .cursor-hover {
-            --cursor-size: 50px !important;
-            background: transparent !important;
-            border: 4px solid #b026ff;
-            transform: translate3d(var(--cx), var(--cy), 0) translate(-50%, -50%) rotate(0deg) !important;
-            transition: width 0.2s, height 0.2s, background-color 0.2s, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .narrative-section {
+        .custom-cursor.hover-active {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 170, 0, 0.1);
+            border: 1px solid var(--amber);
+            mix-blend-mode: difference;
+        }
+
+        .light-flare {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--amber-glow) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(3,3,3,0.9) 0%, rgba(3,3,3,0) 100%);
+        }
+
+        .menu-btn {
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            padding: 10px 24px;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn:hover, .menu-btn:focus {
+            border-color: var(--amber);
+            color: var(--amber);
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
+        }
+
+        /* Pop-out Navigation */
+        .pop-out-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 500px;
             height: 100vh;
+            background: rgba(8, 8, 8, 0.98);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid var(--border);
+            z-index: 2000;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            padding: 40px;
+            transition: right 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+        }
+
+        .pop-out-nav.active { right: 0; }
+
+        .nav-item {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            color: var(--chrome);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .nav-item::before {
+            content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%;
-            padding: 0 1.5rem;
+            left: -20px;
+            top: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--amber);
+            transition: width 0.3s ease;
+            transform: translateY(-50%);
+        }
+
+        .nav-item:hover, .nav-item:focus {
+            color: var(--white);
+            transform: translateX(20px);
+        }
+
+        .nav-item:hover::before, .nav-item:focus::before {
+            width: 12px;
+        }
+
+        /* Typographic Refinement & Accents */
+        .section-tag {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--amber);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .section-tag::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 1px;
+            background: var(--amber);
+        }
+
+        .heading-refined {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            color: var(--white);
+        }
+
+        .accent-glow {
+            color: var(--amber);
+            text-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+        }
+
+        .body-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--chrome);
+            max-width: 480px;
+        }
+
+        /* The SVG Logo Integration */
+        .svg-hero-container {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 2rem;
+        }
+
+        /* Journey Steps */
+        .journey-step {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            padding: 120px 10vw;
+            position: relative;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+
+        /* Section Dividers */
+        .journey-step + .journey-step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 5vw;
+            right: 5vw;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
             pointer-events: none;
         }
-        
-        .content-grid { width: 100%; max-width: 90rem; margin: 0 auto; }
-        
-        .narrative-content {
-            opacity: 0; visibility: hidden; pointer-events: auto; width: 100%;
-            will-change: transform, opacity;
+
+        /* Content Cards */
+        .glass-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        #section-1 .narrative-content { opacity: 1; visibility: visible; }
-        @media (min-width: 768px) { .narrative-section { padding: 0 6vw; } }
-        
-        #scroll-track { height: 500vh; position: relative; }
-        
-        #fixed-content { 
-            position: sticky; 
-            top: 0; 
-            height: 100vh; 
-            width: 100%; 
-            overflow: hidden; 
-            transform: translateZ(0); 
-            will-change: transform;
+        .glass-card:hover {
+            border-color: rgba(255, 170, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,170,0,0.05);
         }
 
-        .text-fluid-hero { font-size: clamp(4rem, 12vw, 14rem); }
-        .text-fluid-h2 { font-size: clamp(3.5rem, 9vw, 10rem); }
-        .text-fluid-p { font-size: clamp(1.125rem, 1.5vw, 1.75rem); }
+        .list-item-accent {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--chrome);
+            transition: color 0.3s ease;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
 
-        .clip-wrap { overflow: hidden; display: block; }
-        .reveal-line { display: block; transform: translateY(110%); will-change: transform; }
+        .list-item-accent:last-child { border-bottom: none; }
+        .list-item-accent:hover { color: var(--white); }
+        .list-item-accent:hover .dot { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
 
-        .hard-border { border: 2px solid rgba(255,255,255,0.1); }
-        .neon-border:hover { border-color: #b026ff; box-shadow: 0 0 20px rgba(176, 38, 255, 0.4); }
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--border);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        /* Vibration / Sub Effect */
+        .sub-kick { animation: kick 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        @keyframes kick {
+            0% { transform: translateY(0); }
+            25% { transform: translateY(4px); filter: brightness(1.2); }
+            50% { transform: translateY(-2px); }
+            75% { transform: translateY(1px); }
+            100% { transform: translateY(0); filter: brightness(1); }
+        }
+
+        /* Pro-Grade Footer */
+        .pro-footer {
+            background: #000;
+            border-top: 1px solid var(--border);
+            padding: 30px 10vw 15px;
+            position: relative;
+            z-index: 20; /* Ensure it stays above canvas */
+            scroll-snap-align: end;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid { grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+        }
+
+        .footer-label {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--chrome);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .footer-value {
+            font-size: 0.8rem;
+            color: var(--white);
+            line-height: 1.4;
+        }
+
+        .footer-link {
+            display: inline-block;
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+
+        .footer-link:hover { color: var(--amber); }
+
+        .footer-bottom {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.3);
+            gap: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .footer-bottom { flex-direction: row; align-items: center; }
+        }
+
+        .legal-links { display: flex; gap: 24px; }
+        .legal-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.2s ease;
+        }
+        .legal-btn:hover { color: var(--amber); }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            background: rgba(3, 3, 3, 0.95);
+            backdrop-filter: blur(20px);
+            display: none;
+            padding: 80px 10vw;
+            overflow-y: auto;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active { display: block; opacity: 1; }
+        
+        #vignette {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.8) 100%);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* Mobile tweaks */
+        @media (max-width: 768px) {
+            * { cursor: auto !important; }
+            .custom-cursor, .light-flare { display: none !important; }
+            nav { padding: 20px; }
+            .journey-step { padding: 100px 5vw; }
+            .pro-footer { padding: 30px 5vw 15px; }
+        }
     </style>
-<base target="_blank">
 </head>
-<body class="selection:bg-neon selection:text-black">
+<body>
 
-    <div id="custom-cursor" aria-hidden="true"></div>
-    
-    <div id="strike-layer" aria-hidden="true">
-        <div class="strike-glow w-[80vw] h-[80vw] top-[-20%] left-[-10%]"></div>
-        <div class="strike-glow w-[60vw] h-[60vw] bottom-[-10%] right-[-10%]"></div>
-        <div class="strike-beam w-[150vw] h-[2px] top-[30%] left-[-20%]"></div>
-        <div class="strike-beam w-[150vw] h-[4px] top-[60%] right-[-30%] opacity-20"></div>
-    </div>
+    <div class="custom-cursor" id="cursor" aria-hidden="true"></div>
+    <div class="light-flare" id="flare" aria-hidden="true"></div>
+    <div id="vignette" aria-hidden="true"></div>
 
-    <div id="webgl-container" aria-hidden="true"></div>
-
-    <nav id="main-nav" class="fixed top-0 left-0 w-full px-6 md:px-10 py-8 z-50 flex justify-between items-center no-select" aria-label="Main Navigation">
-        <div class="text-xs md:text-sm font-bold tracking-widest uppercase cursor-hover-target text-white font-sans">Reflex <span class="text-neon">ENT</span></div>
-        
-        <div class="flex items-center space-x-8 md:space-x-12">
-            <button id="audio-toggle" class="text-xs md:text-sm font-bold tracking-widest uppercase flex items-center space-x-3 cursor-hover-target group text-white font-sans" aria-label="Toggle Sound" aria-pressed="false">
-                <span id="audio-status" class="transition-colors group-hover:text-neon">SOUND OFF</span>
-                <div class="w-3 h-3 bg-white/20 group-hover:bg-neon transition-all duration-300" id="audio-indicator"></div>
-            </button>
-            
-            <button id="open-contact-nav" class="text-xs md:text-sm font-bold tracking-widest uppercase cursor-hover-target hover:text-neon transition-colors text-white font-sans" aria-label="Open Contact Form">
-                CONTACT
-            </button>
-        </div>
+    <nav aria-label="Main Navigation">
+        <div class="font-black text-xs tracking-[0.4em] uppercase" aria-label="Reflex Entertainment Logo">REFLEX™</div>
+        <button class="menu-btn interactive" id="menuToggle" aria-expanded="false" aria-controls="mainNav" onclick="toggleNav()">
+            Menu
+        </button>
     </nav>
 
-    <main id="main-content" class="ui-layer">
-        <div id="scroll-track">
-            <div id="fixed-content">
-                
-                <section class="narrative-section" id="section-1" aria-label="Introduction">
-                    <div class="content-grid">
-                        <div class="narrative-content max-w-7xl">
-                            <h1 class="text-fluid-hero font-display uppercase leading-[0.85] tracking-tighter text-white text-balance">
-                                <span class="clip-wrap"><span class="reveal-line hero-target">PREMIUM</span></span>
-                                <span class="clip-wrap"><span class="reveal-line hero-target text-neon">SOUND.</span></span>
-                            </h1>
-                            <div class="clip-wrap mt-8 md:mt-12">
-                                <p class="text-fluid-p font-sans font-bold uppercase tracking-widest text-white/80 max-w-2xl reveal-line hero-sub-target">
-                                    We bring the music. You enjoy the night. No excuses.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="narrative-section" id="section-2" aria-label="Value Proposition">
-                    <div class="content-grid flex justify-end">
-                        <div class="narrative-content max-w-5xl text-right">
-                            <h2 class="text-fluid-h2 font-display uppercase leading-[0.85] tracking-tighter text-balance">
-                                CLEAR SOUND.
-                            </h2>
-                            <h2 class="text-fluid-h2 font-display uppercase leading-[0.85] tracking-tighter text-transparent stroke-text text-balance mt-[-10px]" style="-webkit-text-stroke: 2px #b026ff;">
-                                HIGH ENERGY.
-                            </h2>
-                            <p class="mt-12 text-fluid-p font-sans font-bold max-w-xl ml-auto text-white/70 leading-relaxed uppercase tracking-wide">
-                                We handle the technical side so your event runs without a hitch. The right gear, the right volume, and the perfect timing.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="narrative-section" id="section-3" aria-label="Process and Equipment">
-                    <div class="content-grid">
-                        <div class="narrative-content max-w-7xl">
-                            <h2 class="text-fluid-h2 font-display uppercase leading-[0.85] tracking-tighter text-balance text-neon">
-                                FLAWLESS.
-                            </h2>
-                            <div class="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-24 font-sans pt-12 relative overflow-hidden group border-t-4 border-white/10">
-                                <div class="absolute top-[-4px] left-0 h-[4px] w-full bg-neon scale-x-0 origin-left transition-transform duration-700 ease-out group-hover:scale-x-100"></div>
-                                
-                                <div class="bg-black/50 p-8 hard-border backdrop-blur-sm">
-                                    <h3 class="text-sm md:text-base font-black tracking-widest uppercase text-neon mb-4 md:mb-6">01 // THE GEAR</h3>
-                                    <p class="font-bold text-white/80 leading-relaxed text-base md:text-xl">Professional-grade audio systems configured specifically for your venue's acoustics. Zero distortion. Maximum impact.</p>
-                                </div>
-                                <div class="bg-black/50 p-8 hard-border backdrop-blur-sm">
-                                    <h3 class="text-sm md:text-base font-black tracking-widest uppercase text-neon mb-4 md:mb-6">02 // THE PROCESS</h3>
-                                    <p class="font-bold text-white/80 leading-relaxed text-base md:text-xl">We arrive early, soundcheck aggressively, and maintain perfect decibel levels from the first guest to the final blackout.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="narrative-section" id="section-4" aria-label="Social Proof">
-                    <div class="content-grid flex justify-center text-center">
-                        <div class="narrative-content max-w-6xl">
-                            <h2 class="text-fluid-h2 font-display uppercase leading-[0.85] tracking-tighter text-balance">
-                                TRUSTED BY <span class="text-neon">PHOENIX.</span>
-                            </h2>
-                            <p class="mt-12 text-fluid-p font-sans font-bold max-w-3xl mx-auto text-white/70 leading-relaxed uppercase tracking-wide">
-                                From exclusive private lock-ins to massive corporate takeovers. We make the audio invisible, so the energy takes control.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="narrative-section" id="section-5" aria-label="Call to Action">
-                    <div class="content-grid flex justify-center text-center">
-                        <div class="narrative-content max-w-5xl">
-                            <h2 class="text-fluid-hero font-display uppercase leading-[0.85] tracking-tighter mb-12 md:mb-20 text-white text-balance">
-                                READY.
-                            </h2>
-                            <button id="open-contact-main" class="inline-flex items-center space-x-6 md:space-x-8 hard-border neon-border px-12 md:px-16 py-6 md:py-8 bg-black hover:bg-neon transition-all duration-300 cursor-hover-target group font-sans">
-                                <span class="text-sm md:text-base font-black tracking-widest uppercase text-white">INITIATE BOOKING</span>
-                                <div class="w-12 md:w-16 h-[3px] bg-white transition-colors relative">
-                                    <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 border-r-[3px] border-t-[3px] border-white transform translate-x-px rotate-45 transition-colors"></div>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                </section>
-
-            </div>
+    <!-- Pop-out Navigation Menu -->
+    <div class="pop-out-nav" id="mainNav" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Navigation Menu">
+        <button class="absolute top-8 right-8 text-xs uppercase tracking-widest text-chrome hover:text-white interactive p-2" onclick="toggleNav()" aria-label="Close Menu">
+            [ Close ]
+        </button>
+        <div class="flex flex-col mt-10">
+            <a href="#step-1" class="nav-item interactive" onclick="toggleNav()">Start</a>
+            <a href="#step-2" class="nav-item interactive" onclick="toggleNav()">Power</a>
+            <a href="#step-3" class="nav-item interactive" onclick="toggleNav()">Services</a>
+            <a href="#step-4" class="nav-item interactive" onclick="toggleNav()">Contact</a>
         </div>
+    </div>
+
+    <main class="interface" id="scroll-container">
+        
+        <!-- THE LOGO JOURNEY (Restored Mic Drop) -->
+        <section class="journey-step flex-col items-start justify-center" id="step-1" aria-labelledby="hero-title">
+            <div class="w-full">
+                <div class="section-tag">Stage 01 / Phoenix</div>
+                
+                <div class="svg-hero-container">
+                    <svg viewBox="0 0 670 200" id="logo-svg" aria-label="Reflex Logo Animation">
+                        <defs>
+                            <linearGradient id="chromeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#666666;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <!-- Sharp Wordmark -->
+                        <g fill="none" stroke="url(#chromeGrad)" stroke-width="2.5" stroke-linejoin="miter">
+                            <path d="M40,160 V40 H110 C130,40 140,50 140,75 C140,100 130,110 110,110 H40 M100,110 L140,160" />
+                            <path d="M170,40 H240 M170,100 H220 M170,160 H240 M170,40 V160" />
+                            <path d="M270,40 H340 M270,100 H320 M270,40 V160" />
+                            <path d="M370,40 V160 H440" />
+                            <path d="M470,40 H540 M470,100 H520 M470,160 H540 M470,40 V160" />
+                        </g>
+                        <!-- The Integrated X / Mic Drop -->
+                        <g id="integrated-x">
+                            <path d="M560,40 L630,160 M630,40 L560,160" stroke="#333" stroke-width="3" />
+                            <path d="M585,140 L605,155 L635,145" stroke="var(--chrome)" stroke-width="2" id="hand-path" fill="none" />
+                            
+                            <!-- Falling Mic Payload -->
+                            <g id="mic-group" transform="translate(595, -100)">
+                                <rect x="-5" y="0" width="10" height="30" fill="var(--amber)" filter="url(#glow)"/>
+                                <path d="M-8,-8 H8 V4 H-8 Z" fill="#222" />
+                                <circle cx="0" cy="-10" r="8" fill="url(#chromeGrad)" />
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+
+                <p class="body-text mt-8">
+                    We deliver the exact audio control required for high-end events. Clear sound, reliable setups, and the right presence to let you lead the room.
+                </p>
+            </div>
+        </section>
+
+        <!-- POWER & REVERB -->
+        <section class="journey-step justify-end" id="step-2" aria-labelledby="power-title">
+            <div class="max-w-xl text-right">
+                <div class="section-tag justify-end">Stage 02 / Output</div>
+                <h2 class="heading-refined" id="power-title">Precision <br> <span class="accent-glow">Control</span></h2>
+                <p class="body-text ml-auto mt-6">
+                    Our systems scale from private engagements to full stage deployments. We eliminate technical friction so the performance remains the sole focus.
+                </p>
+            </div>
+        </section>
+
+        <!-- REFINED SERVICES -->
+        <section class="journey-step" id="step-3" aria-labelledby="services-title">
+            <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <div class="section-tag">Stage 03 / Operations</div>
+                    <div class="glass-card mt-6">
+                        <div class="footer-label text-amber" id="services-title">Capabilities</div>
+                        <ul class="mt-6" role="list">
+                            <li class="list-item-accent interactive">
+                                <span class="dot"></span> Live Audio Engineering
+                            </li>
+                            <li class="list-item-accent interactive">
+                                <span class="dot"></span> Event DJ Execution
+                            </li>
+                            <li class="list-item-accent interactive">
+                                <span class="dot"></span> Scalable PA Deployment
+                            </li>
+                            <li class="list-item-accent interactive !border-b-0">
+                                <span class="dot"></span> Stage Lighting & Rigging
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <!-- Visual balance area, 3D object dominates here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- CLEAN CONTACT -->
+        <section class="journey-step flex-col items-center justify-center text-center" id="step-4" aria-labelledby="contact-title">
+            <div class="w-full max-w-2xl">
+                <div class="section-tag justify-center">Stage 04 / Secure</div>
+                <h2 class="heading-refined mb-10" id="contact-title">Initiate <br> Booking</h2>
+                <a href="mailto:book@reflex.com" class="menu-btn interactive inline-block" style="font-size: 0.8rem; padding: 16px 32px;" aria-label="Send an email to book Reflex Entertainment">
+                    Contact Management
+                </a>
+            </div>
+        </section>
+
+        <!-- PRO-GRADE FOOTER -->
+        <footer class="pro-footer" role="contentinfo">
+            <div class="footer-grid">
+                <div>
+                    <div class="font-bold text-xs tracking-[0.4em] uppercase text-white mb-2">REFLEX™</div>
+                    <p class="text-xs text-chrome max-w-sm">Professional audio solutions architected for the Phoenix metropolitan area.</p>
+                </div>
+                <div>
+                    <div class="footer-label">Contact</div>
+                    <div class="footer-value">
+                        <a href="tel:7179197731" class="footer-link interactive block">717.919.7731</a>
+                        <a href="mailto:hello@reflex.com" class="footer-link interactive block mt-1">hello@reflex.com</a>
+                    </div>
+                </div>
+                <div>
+                    <div class="footer-label">Location</div>
+                    <address class="footer-value not-italic">
+                        Phoenix, AZ &bull; Scottsdale / Tempe
+                    </address>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <span>&copy; 2026 Reflex Entertainment LLC.</span>
+                <div class="legal-links">
+                    <button onclick="showModal('privacy')" class="legal-btn interactive">Privacy Policy</button>
+                    <button onclick="showModal('tos')" class="legal-btn interactive">Terms of Service</button>
+                </div>
+            </div>
+        </footer>
     </main>
 
-    <dialog id="contact-modal" class="bg-black border-4 border-neon text-white p-0 m-auto w-full max-w-5xl rounded-none shadow-[0_0_50px_rgba(176,38,255,0.3)]" aria-labelledby="modal-title" aria-modal="true">
-        <div class="p-8 md:p-24 relative min-h-screen md:min-h-0 flex flex-col justify-center bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjMDAwIi8+CjxjaXJjbGUgY3g9IjEiIGN5PSIxIiByPSIxIiBmaWxsPSIjMjIyIi8+Cjwvc3ZnPg==')]">
-            <button id="close-contact" class="absolute top-6 right-6 md:top-8 md:right-8 p-4 bg-neon text-black hover:bg-white transition-colors cursor-hover-target font-black uppercase tracking-widest text-xs" aria-label="Close Contact Form">
-                CLOSE [X]
-            </button>
-            <h2 id="modal-title" class="text-6xl md:text-8xl font-display uppercase mb-12 md:mb-16 tracking-tighter text-neon">TRANSMIT.</h2>
-            <form id="contact-form" class="space-y-10 md:space-y-14 font-sans" novalidate>
-                <div class="relative group">
-                    <input type="text" id="name" required class="w-full bg-black/80 border-b-4 border-white/20 px-0 py-4 text-white text-xl md:text-3xl font-bold focus:outline-none focus:border-neon transition-colors cursor-hover-target peer" placeholder=" ">
-                    <label for="name" class="absolute left-0 top-4 text-white/50 text-xl md:text-3xl font-bold transition-all peer-focus:-top-8 peer-focus:text-xs peer-focus:md:text-sm peer-focus:tracking-widest peer-focus:text-neon peer-[:not(:placeholder-shown)]:-top-8 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:md:text-sm peer-[:not(:placeholder-shown)]:tracking-widest peer-[:not(:placeholder-shown)]:text-neon uppercase pointer-events-none">IDENTIFICATION</label>
-                </div>
-                <div class="relative group">
-                    <input type="date" id="date" required class="w-full bg-black/80 border-b-4 border-white/20 px-0 py-4 text-white text-xl md:text-3xl font-bold focus:outline-none focus:border-neon transition-colors cursor-hover-target peer" style="color-scheme: dark;">
-                    <label for="date" class="absolute left-0 -top-8 text-xs md:text-sm tracking-widest uppercase text-neon font-bold pointer-events-none">TARGET DATE</label>
-                </div>
-                <div class="relative group">
-                    <textarea id="details" rows="2" required class="w-full bg-black/80 border-b-4 border-white/20 px-0 py-4 text-white text-xl md:text-3xl font-bold focus:outline-none focus:border-neon transition-colors cursor-hover-target resize-none peer" placeholder=" "></textarea>
-                    <label for="details" class="absolute left-0 top-4 text-white/50 text-xl md:text-3xl font-bold transition-all peer-focus:-top-8 peer-focus:text-xs peer-focus:md:text-sm peer-focus:tracking-widest peer-focus:text-neon peer-[:not(:placeholder-shown)]:-top-8 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:md:text-sm peer-[:not(:placeholder-shown)]:tracking-widest peer-[:not(:placeholder-shown)]:text-neon uppercase pointer-events-none">PARAMETERS (LOC, CAP, VIBE)</label>
-                </div>
-                <div class="pt-6 md:pt-8">
-                    <button type="submit" class="w-full bg-neon text-black py-6 md:py-8 font-black tracking-widest uppercase text-sm md:text-base hover:bg-white transition-colors cursor-hover-target border-4 border-transparent hover:border-black">
-                        SEND TRANSMISSION
-                    </button>
-                </div>
-            </form>
+    <!-- CLEAN MODALS -->
+    <div id="privacy" class="modal" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+        <div class="max-w-3xl mx-auto">
+            <button onclick="hideModal()" class="text-xs uppercase mb-8 text-chrome hover:text-white interactive" aria-label="Close Privacy Policy">[ Close ]</button>
+            <h2 class="heading-refined mb-8 text-3xl" id="privacy-title">Privacy Policy</h2>
+            <div class="body-text space-y-6">
+                <p>We maintain strict confidentiality regarding client operations and event details.</p>
+                <p><strong>1. Data Collection:</strong> Information collected via direct correspondence (phone, email) is utilized exclusively for logistical planning and execution of secured engagements.</p>
+                <p><strong>2. Security:</strong> Client rosters and internal event data are never distributed to external entities.</p>
+            </div>
         </div>
-    </dialog>
+    </div>
+
+    <div id="tos" class="modal" role="dialog" aria-modal="true" aria-labelledby="tos-title">
+        <div class="max-w-3xl mx-auto">
+            <button onclick="hideModal()" class="text-xs uppercase mb-8 text-chrome hover:text-white interactive" aria-label="Close Terms of Service">[ Close ]</button>
+            <h2 class="heading-refined mb-8 text-3xl" id="tos-title">Terms of Service</h2>
+            <div class="body-text space-y-6">
+                <p>Operational standards for engagement with Reflex Entertainment.</p>
+                <p><strong>1. Logistics:</strong> Engagement dates are officially secured upon receipt of an executed agreement and designated deposit.</p>
+                <p><strong>2. Environment:</strong> We deploy professional-grade equipment and require secure, grounded staging areas to ensure optimal audio delivery.</p>
+            </div>
+        </div>
+    </div>
 
     <script>
-        const state = {
-            audioPlaying: false,
-            audioContext: null,
-            analyser: null,
-            dataArray: null,
-            scrollProgress: 0,
-            isMobile: window.matchMedia("(max-width: 768px)").matches,
-            isPointerFine: window.matchMedia("(pointer: fine)").matches,
-            kickPulse: 0.0
-        };
+        // --- CUSTOM CURSOR LOGIC (ZERO LATENCY) ---
+        const cursor = document.getElementById('cursor');
+        const flare = document.getElementById('flare');
+        
+        let xTo = gsap.quickTo(cursor, "left", {duration: 0.1, ease: "power3"});
+        let yTo = gsap.quickTo(cursor, "top", {duration: 0.1, ease: "power3"});
+        let flareXTo = gsap.quickTo(flare, "left", {duration: 0.3, ease: "power3"});
+        let flareYTo = gsap.quickTo(flare, "top", {duration: 0.3, ease: "power3"});
 
-        const cursor = document.getElementById('custom-cursor');
-        let targetX = window.innerWidth / 2;
-        let targetY = window.innerHeight / 2;
-        let currX = targetX;
-        let currY = targetY;
+        let mouseX = 0, mouseY = 0;
 
-        if (state.isPointerFine) {
-            window.addEventListener('mousemove', (e) => {
-                targetX = e.clientX;
-                targetY = e.clientY;
-            }, { passive: true });
+        window.addEventListener('mousemove', (e) => {
+            xTo(e.clientX);
+            yTo(e.clientY);
+            flareXTo(e.clientX);
+            flareYTo(e.clientY);
+            
+            mouseX = (e.clientX / window.innerWidth) - 0.5;
+            mouseY = (e.clientY / window.innerHeight) - 0.5;
+        });
 
-            const renderCursor = () => {
-                if (Math.abs(targetX - currX) > 0.1 || Math.abs(targetY - currY) > 0.1) {
-                    currX += (targetX - currX) * 0.2;
-                    currY += (targetY - currY) * 0.2;
-                    cursor.style.setProperty('--cx', `${currX}px`);
-                    cursor.style.setProperty('--cy', `${currY}px`);
-                }
-                requestAnimationFrame(renderCursor);
-            };
-            requestAnimationFrame(renderCursor);
-
-            document.querySelectorAll('.cursor-hover-target').forEach(el => {
-                el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
-                el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
-            });
-        }
-
-        window.addEventListener('resize', () => {
-            state.isMobile = window.matchMedia("(max-width: 768px)").matches;
-            state.isPointerFine = window.matchMedia("(pointer: fine)").matches;
+        // Mobile touch support
+        window.addEventListener('touchmove', (e) => {
+            if(e.touches.length > 0) {
+                mouseX = (e.touches[0].clientX / window.innerWidth) - 0.5;
+                mouseY = (e.touches[0].clientY / window.innerHeight) - 0.5;
+            }
         }, { passive: true });
 
-        gsap.registerPlugin(ScrollTrigger);
-
-        const lenis = new Lenis({
-            duration: 1.0, 
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: 'vertical',
-            gestureDirection: 'vertical',
-            smooth: true,
-            mouseMultiplier: 1.0,
-            smoothTouch: false,
+        // Accelerometer / Gyroscope support for mobile tilt
+        window.addEventListener('deviceorientation', (e) => {
+            if (e.gamma !== null && e.beta !== null) {
+                // gamma is the left-to-right tilt in degrees
+                mouseX = Math.max(-0.5, Math.min(0.5, e.gamma / 90));
+                // beta is the front-to-back tilt in degrees (offset by 45deg for typical holding angle)
+                mouseY = Math.max(-0.5, Math.min(0.5, (e.beta - 45) / 90));
+            }
         });
 
-        lenis.on('scroll', ScrollTrigger.update);
-        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-        gsap.ticker.lagSmoothing(0);
+        // Hover states for the custom cursor
+        document.querySelectorAll('.interactive').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover-active'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover-active'));
+        });
 
-        const initHeroAnimation = () => {
-            const tl = gsap.timeline({ defaults: { ease: "expo.out" } }); 
-            tl.to('.hero-target', { y: '0%', duration: 1.2, stagger: 0.1, delay: 0.1 })
-              .to('.hero-sub-target', { y: '0%', opacity: 1, duration: 1.0 }, "-=0.8");
-        };
-
-        const initScrollJourney = () => {
-            const sections = gsap.utils.toArray('.narrative-section');
-            const totalSections = sections.length;
+        // --- UI LOGIC ---
+        function toggleNav() {
+            const nav = document.getElementById('mainNav');
+            const toggle = document.getElementById('menuToggle');
+            const isActive = nav.classList.toggle('active');
             
-            ScrollTrigger.create({
-                trigger: "#scroll-track",
-                start: "top top", end: "bottom bottom",
-                onUpdate: (self) => { state.scrollProgress = self.progress; }
-            });
-
-            sections.forEach((sec, i) => {
-                const content = sec.querySelector('.narrative-content');
-                const isFirst = i === 0;
-                const isLast = i === totalSections - 1;
-                const startProgress = i * (1 / totalSections);
-                const endProgress = isLast ? 1 : (i + 1) * (1 / totalSections);
-                
-                if (isFirst) {
-                    gsap.to(content, {
-                        scrollTrigger: { trigger: "#scroll-track", start: "top top", end: `${endProgress * 100}% top`, scrub: true },
-                        scale: 0.9, opacity: 0, ease: "none"
-                    });
-                } else {
-                    gsap.fromTo(content, 
-                        { scale: 1.1, opacity: 0, visibility: 'hidden' },
-                        {
-                            scrollTrigger: { trigger: "#scroll-track", start: `${startProgress * 100}% top`, end: `${endProgress * 100}% top`, scrub: true },
-                            scale: isLast ? 1 : 0.9, opacity: 1, visibility: 'visible', ease: "none",
-                            keyframes: isLast ? null : { "0%": { opacity: 0, scale: 1.1 }, "30%": { opacity: 1, scale: 1 }, "70%": { opacity: 1, scale: 1 }, "100%": { opacity: 0, scale: 0.9 } }
-                        }
-                    );
-                }
-            });
-        };
-
-        class LoFiTrapEngine {
-            constructor() {
-                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                
-                this.masterCompressor = this.ctx.createDynamicsCompressor();
-                this.masterCompressor.threshold.value = -10;
-                this.masterCompressor.knee.value = 10;
-                this.masterCompressor.ratio.value = 4;
-                this.masterCompressor.attack.value = 0;
-                this.masterCompressor.release.value = 0.25;
-
-                this.masterGain = this.ctx.createGain();
-                this.masterGain.gain.value = 0;
-
-                this.analyser = this.ctx.createAnalyser();
-                this.analyser.fftSize = 256;
-                this.analyser.smoothingTimeConstant = 0.7;
-                state.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
-                state.analyser = this.analyser;
-
-                this.masterCompressor.connect(this.masterGain);
-                this.masterGain.connect(this.analyser);
-                this.analyser.connect(this.ctx.destination);
-
-                this.isPlaying = false;
-                this.tempo = 75;
-                this.lookahead = 25;
-                this.scheduleAheadTime = 0.1;
-                this.nextNoteTime = 0.0;
-                this.current16thNote = 0;
-                this.timerID = null;
-
-                this.noiseBuffer = this.createNoiseBuffer();
-                this.padNodes = [];
-                
-                // CHORD PROGRESSION: i - VI - III - VII (Cm - Ab - Eb - Bb)
-                this.chords = [
-                    [65.41, 77.78, 98.00],   // Cm (C2, Eb2, G2)
-                    [51.91, 65.41, 77.78],   // Ab (Ab1, C2, Eb2)
-                    [77.78, 98.00, 116.54],  // Eb (Eb2, G2, Bb2)
-                    [58.27, 73.42, 87.31]    // Bb (Bb1, D2, F2)
-                ];
-                this.currentChordIndex = 0;
-                this.oscillators = [];
-            }
-
-            createNoiseBuffer() {
-                const bufferSize = this.ctx.sampleRate * 2;
-                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-                const output = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) { output[i] = Math.random() * 2 - 1; }
-                return buffer;
-            }
-
-            playKick(time) {
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.connect(gain);
-                gain.connect(this.masterCompressor);
-
-                osc.frequency.setValueAtTime(120, time);
-                osc.frequency.exponentialRampToValueAtTime(40, time + 0.1);
-                
-                gain.gain.setValueAtTime(1.5, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.8);
-
-                osc.start(time);
-                osc.stop(time + 1.0);
-
-                setTimeout(() => { state.kickPulse = 1.0; }, (time - this.ctx.currentTime) * 1000);
-            }
-
-            playHat(time, velocity = 0.5) {
-                const noiseSrc = this.ctx.createBufferSource();
-                noiseSrc.buffer = this.noiseBuffer;
-                
-                const filter = this.ctx.createBiquadFilter();
-                filter.type = 'highpass';
-                filter.frequency.value = 6000;
-
-                const gain = this.ctx.createGain();
-                gain.gain.setValueAtTime(velocity, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.05);
-
-                noiseSrc.connect(filter);
-                filter.connect(gain);
-                gain.connect(this.masterCompressor);
-
-                noiseSrc.start(time);
-                noiseSrc.stop(time + 0.1);
-            }
-
-            playSnare(time) {
-                const noiseSrc = this.ctx.createBufferSource();
-                noiseSrc.buffer = this.noiseBuffer;
-                const filter = this.ctx.createBiquadFilter();
-                filter.type = 'bandpass';
-                filter.frequency.value = 1500;
-                const noiseGain = this.ctx.createGain();
-                noiseGain.gain.setValueAtTime(0.8, time);
-                noiseGain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
-                
-                const osc = this.ctx.createOscillator();
-                osc.type = 'triangle';
-                const oscGain = this.ctx.createGain();
-                osc.frequency.setValueAtTime(250, time);
-                oscGain.gain.setValueAtTime(0.5, time);
-                oscGain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
-
-                noiseSrc.connect(filter); filter.connect(noiseGain); noiseGain.connect(this.masterCompressor);
-                osc.connect(oscGain); oscGain.connect(this.masterCompressor);
-
-                noiseSrc.start(time); osc.start(time);
-                noiseSrc.stop(time + 0.2); osc.stop(time + 0.2);
-            }
-
-            startPad() {
-                const filter = this.ctx.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.value = 400;
-
-                const lfo = this.ctx.createOscillator();
-                lfo.frequency.value = 0.2;
-                const lfoGain = this.ctx.createGain();
-                lfoGain.gain.value = 200;
-                lfo.connect(lfoGain);
-                lfoGain.connect(filter.frequency);
-                lfo.start();
-                this.padNodes.push(lfo, lfoGain, filter);
-
-                const padMasterGain = this.ctx.createGain();
-                padMasterGain.gain.value = 0.3;
-                filter.connect(padMasterGain);
-                padMasterGain.connect(this.masterCompressor);
-                this.padNodes.push(padMasterGain);
-
-                const freqs = this.chords[this.currentChordIndex];
-                freqs.forEach((freq) => {
-                    const osc = this.ctx.createOscillator();
-                    osc.type = 'sawtooth';
-                    osc.frequency.value = freq;
-                    osc.detune.value = (Math.random() - 0.5) * 8;
-                    osc.connect(filter);
-                    osc.start();
-                    this.oscillators.push(osc);
-                    this.padNodes.push(osc);
-                });
-            }
-
-            changeChord() {
-                this.currentChordIndex = (this.currentChordIndex + 1) % this.chords.length;
-                const newFreqs = this.chords[this.currentChordIndex];
-                
-                this.oscillators.forEach((osc, i) => {
-                    if(newFreqs[i]) {
-                        osc.frequency.setTargetAtTime(newFreqs[i], this.ctx.currentTime, 0.15);
-                    }
-                });
-                
-                this.playSubBass(newFreqs[0]);
-            }
+            toggle.setAttribute('aria-expanded', isActive);
+            nav.setAttribute('aria-hidden', !isActive);
             
-            playSubBass(freq) {
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.value = freq / 2;
-                
-                gain.gain.setValueAtTime(0.9, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.6);
-                
-                osc.connect(gain);
-                gain.connect(this.masterCompressor);
-                osc.start();
-                osc.stop(this.ctx.currentTime + 0.6);
-            }
-
-            scheduleNote(beatNumber, time) {
-                if (beatNumber === 0 || beatNumber === 10) { this.playKick(time); }
-                if (beatNumber === 4 || beatNumber === 12) { this.playSnare(time); }
-                
-                const isDownbeat = beatNumber % 4 === 0;
-                const isOffbeat = beatNumber % 2 !== 0;
-                let vel = 0.2;
-                if(isDownbeat) vel = 0.4;
-                if(isOffbeat) vel = 0.1;
-                this.playHat(time, vel);
-            }
-
-            nextNote() {
-                const secondsPerBeat = 60.0 / this.tempo;
-                this.nextNoteTime += 0.25 * secondsPerBeat;
-                this.current16thNote++;
-                if (this.current16thNote === 16) { this.current16thNote = 0; }
-            }
-
-            scheduler = () => {
-                while (this.nextNoteTime < this.ctx.currentTime + this.scheduleAheadTime) {
-                    if (this.current16thNote === 0 && this.nextNoteTime > this.ctx.currentTime) {
-                        this.changeChord();
-                    }
-                    
-                    this.scheduleNote(this.current16thNote, this.nextNoteTime);
-                    this.nextNote();
-                }
-                this.timerID = setTimeout(this.scheduler, this.lookahead);
-            }
-
-            start() {
-                if (this.ctx.state === 'suspended') this.ctx.resume();
-                this.isPlaying = true;
-                this.current16thNote = 0;
-                this.nextNoteTime = this.ctx.currentTime + 0.1;
-                this.masterGain.gain.setTargetAtTime(1.0, this.ctx.currentTime, 0.5);
-                this.startPad();
-                this.scheduler();
-            }
-
-            stop() {
-                this.isPlaying = false;
-                this.masterGain.gain.setTargetAtTime(0, this.ctx.currentTime, 1.0);
-                clearTimeout(this.timerID);
-                setTimeout(() => {
-                    this.padNodes.forEach(n => { if(n.stop) n.stop(); if(n.disconnect) n.disconnect(); });
-                    this.padNodes = [];
-                    this.oscillators = [];
-                }, 1500);
+            if(isActive) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
             }
         }
 
-        let audioEngine;
+        function showModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
 
-        document.getElementById('audio-toggle').addEventListener('click', (e) => {
-            const btn = e.currentTarget;
-            const status = document.getElementById('audio-status');
-            const indicator = document.getElementById('audio-indicator');
+        function hideModal() {
+            document.querySelectorAll('.modal').forEach(m => {
+                m.classList.remove('active');
+                m.setAttribute('aria-hidden', 'true');
+            });
+            document.body.style.overflow = 'auto';
+        }
+
+        // --- THREE.JS ENGINE ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        const amberLight = new THREE.PointLight(0xffaa00, 8, 40);
+        amberLight.position.set(5, 5, 5);
+        scene.add(amberLight);
+
+        const fillLight = new THREE.DirectionalLight(0xffffff, 0.2);
+        fillLight.position.set(-5, 0, 5);
+        scene.add(fillLight);
+
+        // Core Glass Monolith
+        const monolithGeo = new THREE.BoxGeometry(3.5, 6, 0.4);
+        const monolithMat = new THREE.MeshPhysicalMaterial({
+            color: 0x111111, metalness: 0.9, roughness: 0.1,
+            transmission: 0.9, thickness: 1, transparent: true, opacity: 0.4,
+            clearcoat: 1.0, clearcoatRoughness: 0.1
+        });
+        const monolith = new THREE.Mesh(monolithGeo, monolithMat);
+
+        // Add structural glowing accent lines to the monolith
+        const edges = new THREE.EdgesGeometry(monolithGeo);
+        const lineMat = new THREE.LineBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.5 });
+        const wireframe = new THREE.LineSegments(edges, lineMat);
+        monolith.add(wireframe);
+
+        scene.add(monolith);
+        camera.position.z = 10;
+
+        // Sub-kick structural effect on mousedown
+        window.addEventListener('mousedown', () => {
+            document.body.classList.add('sub-kick');
+            setTimeout(() => document.body.classList.remove('sub-kick'), 200);
             
-            if (!audioEngine) audioEngine = new LoFiTrapEngine();
-
-            if (!audioEngine.isPlaying) {
-                audioEngine.start();
-                btn.setAttribute('aria-pressed', 'true');
-                status.innerText = "SOUND ON";
-                indicator.classList.replace('bg-white/20', 'bg-neon');
-                indicator.classList.add('shadow-[0_0_15px_rgba(176,38,255,1)]');
-            } else {
-                audioEngine.stop();
-                btn.setAttribute('aria-pressed', 'false');
-                status.innerText = "SOUND OFF";
-                indicator.classList.replace('bg-neon', 'bg-white/20');
-                indicator.classList.remove('shadow-[0_0_15px_rgba(176,38,255,1)]');
-            }
+            // Pulse the accent lines
+            gsap.fromTo(lineMat, { opacity: 1 }, { opacity: 0.5, duration: 0.4 });
+            gsap.fromTo(amberLight, { intensity: 15 }, { intensity: 8, duration: 0.4 });
         });
 
-        const modal = document.getElementById('contact-modal');
-        const mainContent = document.getElementById('main-content');
-        const mainNav = document.getElementById('main-nav');
-        const openBtns = [document.getElementById('open-contact-nav'), document.getElementById('open-contact-main')];
-        const closeBtn = document.getElementById('close-contact');
-        const form = document.getElementById('contact-form');
-
-        const openModal = () => {
-            modal.showModal(); lenis.stop(); 
-            mainContent.setAttribute('aria-hidden', 'true'); mainNav.setAttribute('aria-hidden', 'true');
-        };
-
-        const closeModal = () => {
-            modal.setAttribute('closing', '');
-            modal.addEventListener('animationend', () => {
-                modal.removeAttribute('closing'); modal.close(); lenis.start(); 
-                mainContent.removeAttribute('aria-hidden'); mainNav.removeAttribute('aria-hidden');
-            }, { once: true });
-        };
-
-        openBtns.forEach(btn => btn.addEventListener('click', openModal));
-        closeBtn.addEventListener('click', closeModal);
+        function animate() {
+            requestAnimationFrame(animate);
+            monolith.rotation.y += 0.002;
+            monolith.rotation.x = mouseY * 0.15;
+            monolith.position.x = mouseX * 2;
+            
+            amberLight.position.x = mouseX * 15;
+            amberLight.position.y = -mouseY * 15;
+            
+            renderer.render(scene, camera);
+        }
         
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if(!form.checkValidity()) { form.reportValidity(); return; }
-            const btn = e.target.querySelector('button[type="submit"]');
-            const originalText = btn.innerText;
-            btn.innerText = "TRANSMISSION SUCCESS"; btn.classList.replace('bg-neon', 'bg-white'); btn.disabled = true;
-            setTimeout(() => {
-                closeModal();
-                setTimeout(() => { btn.innerText = originalText; btn.classList.replace('bg-white', 'bg-neon'); btn.disabled = false; form.reset(); }, 500);
-            }, 1500);
-        });
+        // --- GSAP SCROLL LOGIC ---
+        gsap.registerPlugin(ScrollTrigger);
 
-        const initWebGL = () => {
-            const container = document.getElementById('webgl-container');
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-            const baseZ = state.isMobile ? 35 : 22; 
-            camera.position.set(0, 5, baseZ);
+        function initAnimations() {
+            // 1. The Literal Reflex Effect (Mic Drop into X)
+            const mic = document.getElementById('mic-group');
+            const hand = document.getElementById('hand-path');
 
-            const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: "high-performance" });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); 
-            container.appendChild(renderer.domElement);
-
-            const gridSize = state.isMobile ? 70 : 130; 
-            const geometry = new THREE.BufferGeometry();
-            const totalVertices = gridSize * gridSize;
-            const positions = new Float32Array(totalVertices * 3);
-
-            let idx = 0;
-            const spread = 80.0;
-            for (let i = 0; i < gridSize; i++) {
-                for (let j = 0; j < gridSize; j++) {
-                    positions[idx++] = (i / (gridSize - 1)) * spread - (spread / 2);
-                    positions[idx++] = 0;
-                    positions[idx++] = (j / (gridSize - 1)) * spread - (spread / 2);
+            const micTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: "#step-1",
+                    start: "top top",
+                    end: "bottom center",
+                    scrub: 0.5
                 }
-            }
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-            const material = new THREE.ShaderMaterial({
-                uniforms: {
-                    u_time: { value: 0 },
-                    u_kick: { value: 0 },
-                    u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
-                },
-                vertexShader: `
-                    uniform float u_time;
-                    uniform float u_kick;
-                    varying float vDepth;
-                    varying float vGlow;
-
-                    void main() {
-                        vec3 pos = position;
-                        float distSq = pos.x * pos.x + pos.z * pos.z;
-                        
-                        float baseline = 15.0 * exp(-distSq / 400.0) - 10.0;
-                        
-                        float shockwave = sin(sqrt(distSq) * 0.5 - u_time * 8.0) * exp(-distSq * 0.005) * (u_kick * 6.0);
-                        
-                        pos.y = baseline + shockwave;
-                        
-                        vDepth = pos.y;
-                        vGlow = u_kick * exp(-distSq * 0.002);
-
-                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-                        gl_Position = projectionMatrix * mvPosition;
-                        
-                        gl_PointSize = (3.0 + (vGlow * 12.0)) * (25.0 / -mvPosition.z);
-                    }
-                `,
-                fragmentShader: `
-                    varying float vDepth;
-                    varying float vGlow;
-
-                    void main() {
-                        vec2 xy = gl_PointCoord.xy - vec2(0.5);
-                        float ll = length(xy);
-                        if(ll > 0.5) discard;
-
-                        float alpha = smoothstep(0.5, 0.45, ll);
-
-                        vec3 voidColor = vec3(0.05, 0.0, 0.08);
-                        vec3 neonColor = vec3(0.69, 0.15, 1.0);
-                        vec3 whiteHot = vec3(1.0, 1.0, 1.0);
-                        
-                        vec3 baseColor = mix(voidColor, neonColor, clamp(vDepth * 0.1 + 0.5, 0.0, 1.0));
-                        vec3 finalColor = mix(baseColor, whiteHot, vGlow);
-                        
-                        float depthFade = smoothstep(-15.0, 5.0, vDepth);
-                        gl_FragColor = vec4(finalColor, alpha * depthFade);
-                    }
-                `,
-                transparent: true, depthWrite: false, blending: THREE.AdditiveBlending 
             });
 
-            const points = new THREE.Points(geometry, material);
-            scene.add(points);
+            micTl.to(mic, { y: 155, ease: "none" })
+                 .to(hand, { strokeWidth: 4, stroke: "#ffaa00", scale: 1.05, transformOrigin: "center" }, "<");
 
-            window.addEventListener('resize', () => {
-                const width = window.innerWidth; const height = window.innerHeight;
-                camera.aspect = width / height;
-                camera.fov = width < 768 ? 65 : 55;
-                camera.position.z = width < 768 ? 35 : 22;
-                camera.updateProjectionMatrix();
-                renderer.setSize(width, height);
-                material.uniforms.u_resolution.value.set(width, height);
-            }, { passive: true });
+            // 2. Journey Transitions for 3D Environment
+            gsap.to(camera.position, { 
+                z: 4, 
+                scrollTrigger: { trigger: "#step-1", start: "top top", end: "bottom top", scrub: 1 }
+            });
 
-            const clock = new THREE.Clock();
+            gsap.to(monolith.rotation, { 
+                y: Math.PI * 2, 
+                scrollTrigger: { trigger: "#scroll-container", start: "top top", end: "bottom bottom", scrub: 2 }
+            });
 
-            const render = () => {
-                const elapsedTime = clock.getElapsedTime();
-                material.uniforms.u_time.value = elapsedTime;
+            gsap.to(monolith.position, { 
+                x: -6, z: -2,
+                scrollTrigger: { trigger: "#step-2", start: "top center", end: "bottom top", scrub: 1 }
+            });
 
-                state.kickPulse = Math.max(0, state.kickPulse - 0.03);
-                material.uniforms.u_kick.value = state.kickPulse;
+            gsap.to(monolith.position, { 
+                x: 6, z: -2,
+                scrollTrigger: { trigger: "#step-3", start: "top center", end: "bottom top", scrub: 1 }
+            });
 
-                scene.rotation.x = 0.2 + Math.sin(elapsedTime * 0.1) * 0.05; 
-                scene.rotation.y = elapsedTime * 0.05;
+            gsap.to(monolith.position, { 
+                x: 0, z: -4, 
+                scrollTrigger: { trigger: "#step-4", start: "top bottom", end: "center center", scrub: 1 }
+            });
+        }
 
-                const camY = 5 + (state.scrollProgress * 25);
-                const camZ = baseZ - (state.scrollProgress * 35); 
-                camera.position.y = camY;
-                camera.position.z = camZ;
-                camera.lookAt(0, 5, 0);
-
-                renderer.render(scene, camera);
-                requestAnimationFrame(render);
-            };
-
-            render();
+        window.onload = () => {
+            animate();
+            initAnimations();
+            gsap.from(".svg-hero-container", { opacity: 0, y: 30, duration: 1.5, ease: "power3.out" });
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            document.fonts.ready.then(() => {
-                initHeroAnimation();
-                initScrollJourney();
-                initWebGL();
-            });
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
 </body>

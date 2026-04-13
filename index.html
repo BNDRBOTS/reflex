@@ -659,41 +659,7 @@
                 <div class="section-tag"> 01 / REFLEX ENTERTAINMENT™ </div>
                 
                 <div class="svg-hero-container">
-                    <svg viewBox="0 0 670 200" id="logo-svg" aria-label="Reflex Logo Animation">
-                        <defs>
-                            <linearGradient id="chromeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#666666;stop-opacity:1" />
-                            </linearGradient>
-                            <filter id="glow">
-                                <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-                                <feMerge>
-                                    <feMergeNode in="coloredBlur"/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        <!-- Sharp Wordmark -->
-                        <g fill="none" stroke="url(#chromeGrad)" stroke-width="2.5" stroke-linejoin="miter">
-                            <path d="M40,160 V40 H110 C130,40 140,50 140,75 C140,100 130,110 110,110 H40 M100,110 L140,160" />
-                            <path d="M170,40 H240 M170,100 H220 M170,160 H240 M170,40 V160" />
-                            <path d="M270,40 H340 M270,100 H320 M270,40 V160" />
-                            <path d="M370,40 V160 H440" />
-                            <path d="M470,40 H540 M470,100 H520 M470,160 H540 M470,40 V160" />
-                        </g>
-                        <!-- The Integrated X / Mic Drop -->
-                        <g id="integrated-x">
-                            <path d="M560,40 L630,160 M630,40 L560,160" stroke="#333" stroke-width="3" />
-                            <path d="M585,140 L605,155 L635,145" stroke="var(--chrome)" stroke-width="2" id="hand-path" fill="none" />
-                            
-                            <!-- Falling Mic Payload -->
-                            <g id="mic-group" transform="translate(595, -100)">
-                                <rect x="-5" y="0" width="10" height="30" fill="var(--maroon)" filter="url(#glow)"/>
-                                <path d="M-8,-8 H8 V4 H-8 Z" fill="#222" />
-                                <circle cx="0" cy="-10" r="8" fill="url(#chromeGrad)" />
-                            </g>
-                        </g>
-                    </svg>
+                    <img src="https://www.dropbox.com/scl/fi/apwmnamfq740l6skb1mcr/rflxcut1.png?rlkey=2knaei6f88szy1uh73za5b6fo&st=dgznkpdx&raw=1" alt="Reflex Entertainment Logo" class="w-[90%] md:w-auto max-w-[600px] h-auto block -ml-2 md:-ml-4" style="filter: invert(92%) sepia(8%) saturate(120%) hue-rotate(330deg) brightness(95%); object-fit: contain; object-position: left;" onerror="this.style.display='none'">
                 </div>
 
                 <p class="body-text mt-6 md:mt-8">
@@ -1068,21 +1034,6 @@
         gsap.registerPlugin(ScrollTrigger);
 
         function setupAnimations() {
-            const mic = document.getElementById('mic-group');
-            const hand = document.getElementById('hand-path');
-
-            const micTl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: "#step-1",
-                    start: "top top",
-                    end: "bottom center",
-                    scrub: 0.5
-                }
-            });
-
-            micTl.to(mic, { y: 155, ease: "none" })
-                 .to(hand, { strokeWidth: 4, stroke: "#8A033E", scale: 1.05, transformOrigin: "center" }, "<");
-
             const xOffset = isTouch ? 0 : 6;
             const zOffsetStep3 = isTouch ? -6 : -2;
 

@@ -90,11 +90,11 @@
             left: 0;
             width: 6px;
             height: 6px;
-            background: var(--maroon);
+            background: #dcd7cf;
             border-radius: 50%;
             pointer-events: none;
             z-index: 10000;
-            box-shadow: 0 0 10px var(--maroon), 0 0 20px var(--maroon);
+            box-shadow: 0 0 10px rgba(220, 215, 207, 0.5), 0 0 20px rgba(220, 215, 207, 0.3);
             transform: translate(-50%, -50%);
             transition: width 0.2s, height 0.2s, background-color 0.2s;
         }
@@ -102,8 +102,8 @@
         .custom-cursor.hover-on {
             width: 40px;
             height: 40px;
-            background: rgba(138, 3, 62, 0.1);
-            border: 1px solid var(--maroon);
+            background: rgba(220, 215, 207, 0.1);
+            border: 1px solid #dcd7cf;
             mix-blend-mode: difference;
         }
 
@@ -113,7 +113,7 @@
             left: 0;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, var(--maroon-glow) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(220, 215, 207, 0.15) 0%, transparent 60%);
             pointer-events: none;
             z-index: 0;
             transform: translate(-50%, -50%);
@@ -923,8 +923,8 @@
         renderer.setPixelRatio(resScale);
         document.body.appendChild(renderer.domElement);
 
-        /* Adjusted Lighting for sophisticated crimson reflection */
-        const maroonLight = new THREE.PointLight(0x600225, 4, 50);
+        /* Adjusted Lighting for sophisticated bone-white reflection */
+        const maroonLight = new THREE.PointLight(0xdcd7cf, 2.5, 50);
         maroonLight.position.set(5, 5, 5);
         scene.add(maroonLight);
 
@@ -1006,7 +1006,7 @@
             );
 
             gsap.fromTo(baseLineMat, { opacity: 1 }, { opacity: 0.6, duration: 0.4 });
-            gsap.fromTo(maroonLight, { intensity: 8 }, { intensity: 4, duration: 0.4 });
+            gsap.fromTo(maroonLight, { intensity: 5 }, { intensity: 2.5, duration: 0.4 });
         };
         window.addEventListener('mousedown', triggerKick);
         window.addEventListener('touchstart', triggerKick, {passive: true});
@@ -1030,7 +1030,7 @@
             particlesMesh.rotation.y = time * 0.05;
             particlesMesh.rotation.x = time * 0.02;
             
-            maroonLight.intensity = 4 + Math.sin(time * 2) * 0.8;
+            maroonLight.intensity = 2.5 + Math.sin(time * 2) * 0.5;
             
             maroonLight.position.x = mouseX * 15;
             maroonLight.position.y = -mouseY * 15;

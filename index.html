@@ -373,15 +373,6 @@
             100% { transform: scaleY(1); }
         }
 
-        .data-point {
-            font-size: 0.5rem;
-            letter-spacing: 0.3em;
-            color: var(--chrome);
-            position: absolute;
-            text-transform: uppercase;
-            pointer-events: none;
-        }
-
         .list-item-accent {
             display: flex;
             align-items: center;
@@ -546,8 +537,8 @@
             100% { transform: translate(3vw, 4vh) scale(1.1); opacity: 0.25; }
         }
 
-        /* Mobile specific strict overrides */
-        @media (max-width: 768px) {
+        /* Mobile specific strict overrides - Preserving Desktop strictly */
+        @media (max-width: 768px), (hover: none) and (pointer: coarse) {
             * { cursor: auto !important; }
             .custom-cursor, .light-flare { display: none !important; }
             nav { padding: max(16px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 16px max(20px, env(safe-area-inset-left)); }
@@ -555,13 +546,13 @@
             .glass-card { padding: 32px 24px; }
             .pro-footer { padding: 60px 6vw max(40px, env(safe-area-inset-bottom)); }
             
-            .accent-cross, .data-point, .eq-accent { display: none; }
+            .accent-cross, .eq-accent { display: none; }
             
             .text-right { text-align: left; }
             .justify-end { justify-content: flex-start; }
             .ml-auto { margin-left: 0; }
 
-            /* Touch Interactions Geometry Expansion */
+            /* Touch Interactions Geometry Expansion - 44px min compliant */
             .menu-btn, .footer-link, .legal-btn, .nav-item {
                 min-height: 44px;
                 display: inline-flex;
@@ -577,7 +568,7 @@
                 align-items: center;
                 justify-content: center;
                 padding: 10px;
-                margin: -10px;
+                margin: -10px; /* Offset to keep visual alignment while expanding tap target */
             }
             .footer-value {
                 display: flex;
@@ -664,7 +655,7 @@
                 </div>
 
                 <p class="body-text mt-8">
-                    We bring Phoenix's top audio controllers to your event.
+                    We provide Phoenix's premier live audio for your event.
                 </p>
             </div>
         </section>
@@ -674,15 +665,14 @@
             <div class="eq-accent" style="top: 20%; right: 10%;">
                 <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
             </div>
-            <div class="data-point" style="bottom: 20%; right: 10%;">100º Still Climbin</div>
 
             <div class="max-w-xl md:text-right">
                 <div class="section-tag md:justify-end"> 02 / RESULTS </div>
-                <h2 class="heading-refined" id="power-title"> Experience Pays Off <br> <span class="accent-glow">Control</span></h2>
+                <h2 class="heading-refined" id="power-title"> Experience Pays Off <br> <span class="accent-glow">Delivered</span></h2>
                 <p class="body-text md:ml-auto mt-6">
-                    Our reliable, punctual team applies decades of combined experience and mindfulness to your busy schedule.
+                    Our reliable team applies decades of combined experience to your busy schedule.
                     
-                    Political events. Concert crowds. Rooftop parties. We deliver what you ask for. Call Us Today.
+                    Political events. Concert crowds. Rooftop parties. We deliver the sound you demand. Call us today.
                 </p>
             </div>
         </section>
@@ -693,26 +683,25 @@
             <div class="eq-accent" style="bottom: 10%; right: 5%;">
                 <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
             </div>
-            <div class="data-point" style="top: 12%; left: 5%;">110º Still Climbing</div>
 
             <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                 <div>
-                    <div class="section-tag"> 03 / What We Do For Yout</div>
+                    <div class="section-tag"> 03 / Our Services</div>
                     <div class="glass-card mt-6">
                         <div class="accent-cross" style="top: 10px; right: 10px; opacity: 0.5;"></div>
-                        <div class="footer-label text-maroon" id="services-title">Horsepower</div>
+                        <div class="footer-label text-maroon" id="services-title">Live Audio</div>
                         <ul class="mt-6" role="list">
                             <li class="list-item-accent interactive">
-                                <span class="dot"></span> Live Audio Equipment Provided
+                                <span class="dot"></span> Professional Audio Systems
                             </li>
                             <li class="list-item-accent interactive">
-                                <span class="dot"></span> Private Events | Shows 
+                                <span class="dot"></span> Private Events & Shows 
                             </li>
                             <li class="list-item-accent interactive">
                                 <span class="dot"></span> Phoenix Metro Area
                             </li>
                             <li class="list-item-accent interactive !border-b-0">
-                                <span class="dot"></span> Staging, Lighting, & Rigging
+                                <span class="dot"></span> Staging, Lighting & Rigging
                             </li>
                         </ul>
                     </div>
@@ -724,13 +713,12 @@
         <!-- CLEAN CONTACT -->
         <section class="journey-step flex-col items-center justify-center text-center" id="step-4" aria-labelledby="contact-title">
             <div class="accent-cross" style="top: 15%; left: 15%;"></div>
-            <div class="data-point" style="bottom: 15%; left: 15%;">120º It's HOT</div>
             
             <div class="w-full max-w-2xl">
-                <div class="section-tag justify-center"> 04 / Lock-In</div>
-                <h2 class="heading-refined mb-10" id="contact-title">Setup <br> Booking</h2>
+                <div class="section-tag justify-center"> 04 / Booking</div>
+                <h2 class="heading-refined mb-10" id="contact-title">Secure Your <br> Date</h2>
                 <a href="mailto:book@reflex.com" class="menu-btn interactive inline-block" style="font-size: 0.8rem; padding: 16px 32px;" aria-label="Send an email to book Reflex Entertainment">
-                    Contact Management
+                    Contact Booking
                 </a>
             </div>
         </section>
@@ -770,7 +758,7 @@
     <!-- CLEAN MODALS -->
     <div id="privacy" class="modal" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
         <div class="max-w-3xl mx-auto">
-            <button onclick="hideModal()" class="text-xs uppercase mb-8 text-chrome close-btn interactive -ml-4" aria-label="Close Privacy Policy">[ Close ]</button>
+            <button onclick="hideModal()" class="text-xs uppercase mb-8 text-chrome close-btn interactive md:-ml-4" aria-label="Close Privacy Policy">[ Close ]</button>
             <h2 class="heading-refined mb-8 text-3xl" id="privacy-title">Privacy Policy</h2>
             <div class="body-text space-y-6">
                 <p>We maintain strict confidentiality regarding client operations and event details.</p>
@@ -782,7 +770,7 @@
 
     <div id="tos" class="modal" role="dialog" aria-modal="true" aria-labelledby="tos-title">
         <div class="max-w-3xl mx-auto">
-            <button onclick="hideModal()" class="text-xs uppercase mb-8 text-chrome close-btn interactive -ml-4" aria-label="Close Terms of Service">[ Close ]</button>
+            <button onclick="hideModal()" class="text-xs uppercase mb-8 text-chrome close-btn interactive md:-ml-4" aria-label="Close Terms of Service">[ Close ]</button>
             <h2 class="heading-refined mb-8 text-3xl" id="tos-title">Terms of Service</h2>
             <div class="body-text space-y-6">
                 <p>Operational standards for engagement with Reflex Entertainment.</p>

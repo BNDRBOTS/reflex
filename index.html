@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REFLEX™ |  Professional Phoenix Audio Entertainment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>REFLEX™ | Professional Phoenix Audio Entertainment</title>
     <meta name="description" content="Phoenix's premier pro audio and DJ service. Reflex Entertainment delivers high-fidelity sound for luxury events, private parties, and live stages.">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -13,20 +13,34 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
 
         :root {
-            --obsidian: #030303;
-            --amber: #ffaa00; 
-            --amber-glow: rgba(255, 170, 0, 0.4);
-            --white: #ffffff;
-            --chrome: #a1a1aa;
-            --surface: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
+            --obsidian: #1A1A1A;
+            --charcoal: #2C2C2C;
+            --bone: #E6DCC3;
+            --bone-muted: #B0A28A;
+            --maroon: #800000;
+            --maroon-glow: rgba(128, 0, 0, 0.45);
+            --surface: rgba(44, 44, 44, 0.4);
+            --border: rgba(230, 220, 195, 0.12);
         }
 
-        * { cursor: none !important; margin: 0; padding: 0; box-sizing: border-box; }
+        /* Base selections & touch tap optimizations */
+        * { 
+            cursor: none !important; 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+        }
 
         *:focus-visible {
-            outline: 1px solid var(--amber);
+            outline: 2px solid var(--maroon);
             outline-offset: 4px;
+        }
+
+        /* Prevent highlight artifacts on interactive elements only */
+        .interactive, button, a {
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         html {
@@ -36,13 +50,16 @@
 
         body {
             background-color: var(--obsidian);
-            color: var(--white);
+            color: var(--bone);
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Hardware Accelerated Overlays */
+        .text-amber { color: var(--maroon) !important; }
+        .text-chrome { color: var(--bone-muted) !important; }
+        .hover\:text-white:hover { color: var(--bone) !important; }
+
         canvas {
             position: fixed;
             top: 0;
@@ -54,25 +71,24 @@
         .interface {
             position: relative;
             z-index: 10;
-            pointer-events: none; /* Let clicks pass through to background if needed */
+            pointer-events: none;
         }
 
         .interface section, .interface footer {
-            pointer-events: auto; /* Re-enable clicks for actual content */
+            pointer-events: auto;
         }
 
-        /* Zero Latency Cursor */
         .custom-cursor {
             position: fixed;
             top: 0;
             left: 0;
             width: 6px;
             height: 6px;
-            background: var(--amber);
+            background: var(--maroon);
             border-radius: 50%;
             pointer-events: none;
             z-index: 10000;
-            box-shadow: 0 0 10px var(--amber), 0 0 20px var(--amber);
+            box-shadow: 0 0 12px var(--maroon), 0 0 24px var(--maroon);
             transform: translate(-50%, -50%);
             transition: width 0.2s, height 0.2s, background-color 0.2s;
         }
@@ -80,8 +96,8 @@
         .custom-cursor.hover-active {
             width: 40px;
             height: 40px;
-            background: rgba(255, 170, 0, 0.1);
-            border: 1px solid var(--amber);
+            background: rgba(128, 0, 0, 0.1);
+            border: 1px solid var(--maroon);
             mix-blend-mode: difference;
         }
 
@@ -91,14 +107,13 @@
             left: 0;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, var(--amber-glow) 0%, transparent 60%);
+            background: radial-gradient(circle, var(--maroon-glow) 0%, transparent 65%);
             pointer-events: none;
             z-index: 0;
             transform: translate(-50%, -50%);
             mix-blend-mode: screen;
         }
 
-        /* Navigation */
         nav {
             position: fixed;
             top: 0;
@@ -109,7 +124,7 @@
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
-            background: linear-gradient(180deg, rgba(3,3,3,0.9) 0%, rgba(3,3,3,0) 100%);
+            background: linear-gradient(180deg, rgba(26,26,26,0.95) 0%, rgba(26,26,26,0) 100%);
         }
 
         .menu-btn {
@@ -121,17 +136,20 @@
             letter-spacing: 0.2em;
             text-transform: uppercase;
             font-weight: 500;
-            color: var(--white);
+            color: var(--bone);
             transition: all 0.3s ease;
+            min-height: 44px; /* Touch target minimum */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .menu-btn:hover, .menu-btn:focus {
-            border-color: var(--amber);
-            color: var(--amber);
-            box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
+            border-color: var(--maroon);
+            color: var(--maroon);
+            box-shadow: 0 0 18px rgba(128, 0, 0, 0.3);
         }
 
-        /* Pop-out Navigation */
         .pop-out-nav {
             position: fixed;
             top: 0;
@@ -139,7 +157,8 @@
             width: 100%;
             max-width: 500px;
             height: 100vh;
-            background: rgba(8, 8, 8, 0.98);
+            height: 100dvh; /* Mobile height parity */
+            background: rgba(26, 26, 26, 0.98);
             backdrop-filter: blur(20px);
             border-left: 1px solid var(--border);
             z-index: 2000;
@@ -158,12 +177,14 @@
             line-height: 1.2;
             text-transform: uppercase;
             letter-spacing: -0.02em;
-            color: var(--chrome);
+            color: var(--bone-muted);
             transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             margin-bottom: 1rem;
             position: relative;
+            padding: 8px 0; /* Expanded hit area */
         }
 
         .nav-item::before {
@@ -173,13 +194,13 @@
             top: 50%;
             width: 0;
             height: 2px;
-            background: var(--amber);
+            background: var(--maroon);
             transition: width 0.3s ease;
             transform: translateY(-50%);
         }
 
         .nav-item:hover, .nav-item:focus {
-            color: var(--white);
+            color: var(--bone);
             transform: translateX(20px);
         }
 
@@ -187,12 +208,11 @@
             width: 12px;
         }
 
-        /* Typographic Refinement & Accents */
         .section-tag {
             font-size: 0.6rem;
             text-transform: uppercase;
             letter-spacing: 0.3em;
-            color: var(--amber);
+            color: var(--maroon);
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -205,7 +225,7 @@
             display: block;
             width: 24px;
             height: 1px;
-            background: var(--amber);
+            background: var(--maroon);
         }
 
         .heading-refined {
@@ -214,29 +234,27 @@
             line-height: 1;
             letter-spacing: -0.02em;
             text-transform: uppercase;
-            color: var(--white);
+            color: var(--bone);
         }
 
         .accent-glow {
-            color: var(--amber);
-            text-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+            color: var(--maroon);
+            text-shadow: 0 0 20px rgba(128, 0, 0, 0.5);
         }
 
         .body-text {
             font-size: 1rem;
             line-height: 1.6;
-            color: var(--chrome);
+            color: var(--bone-muted);
             max-width: 480px;
         }
 
-        /* The SVG Logo Integration */
         .svg-hero-container {
             width: 100%;
             max-width: 800px;
             margin-bottom: 2rem;
         }
 
-        /* Journey Steps */
         .journey-step {
             min-height: 100vh;
             min-height: 100dvh;
@@ -248,7 +266,6 @@
             scroll-snap-stop: always;
         }
 
-        /* Section Dividers */
         .journey-step + .journey-step::before {
             content: '';
             position: absolute;
@@ -260,7 +277,6 @@
             pointer-events: none;
         }
 
-        /* Content Cards */
         .glass-card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -270,8 +286,8 @@
         }
 
         .glass-card:hover {
-            border-color: rgba(255, 170, 0, 0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,170,0,0.05);
+            border-color: rgba(128, 0, 0, 0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(128,0,0,0.08);
         }
 
         .list-item-accent {
@@ -281,15 +297,15 @@
             font-size: 1.25rem;
             font-weight: 700;
             text-transform: uppercase;
-            color: var(--chrome);
+            color: var(--bone-muted);
             transition: color 0.3s ease;
             padding: 12px 0;
             border-bottom: 1px solid var(--border);
         }
 
         .list-item-accent:last-child { border-bottom: none; }
-        .list-item-accent:hover { color: var(--white); }
-        .list-item-accent:hover .dot { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+        .list-item-accent:hover { color: var(--bone); }
+        .list-item-accent:hover .dot { background: var(--maroon); box-shadow: 0 0 10px var(--maroon); }
 
         .dot {
             width: 6px;
@@ -299,7 +315,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Vibration / Sub Effect */
         .sub-kick { animation: kick 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
         @keyframes kick {
             0% { transform: translateY(0); }
@@ -309,13 +324,12 @@
             100% { transform: translateY(0); filter: brightness(1); }
         }
 
-        /* Pro-Grade Footer */
         .pro-footer {
-            background: #000;
+            background: var(--obsidian);
             border-top: 1px solid var(--border);
             padding: 30px 10vw 15px;
             position: relative;
-            z-index: 20; /* Ensure it stays above canvas */
+            z-index: 20;
             scroll-snap-align: end;
         }
 
@@ -334,26 +348,26 @@
             font-size: 0.55rem;
             text-transform: uppercase;
             letter-spacing: 0.2em;
-            color: var(--chrome);
+            color: var(--bone-muted);
             margin-bottom: 6px;
             font-weight: 700;
         }
 
         .footer-value {
             font-size: 0.8rem;
-            color: var(--white);
+            color: var(--bone);
             line-height: 1.4;
         }
 
         .footer-link {
             display: inline-block;
-            color: var(--white);
+            color: var(--bone);
             text-decoration: none;
             transition: color 0.2s ease;
             position: relative;
         }
 
-        .footer-link:hover { color: var(--amber); }
+        .footer-link:hover { color: var(--maroon); }
 
         .footer-bottom {
             display: flex;
@@ -361,9 +375,9 @@
             justify-content: space-between;
             align-items: flex-start;
             padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(230,220,195,0.08);
             font-size: 0.65rem;
-            color: rgba(255,255,255,0.3);
+            color: var(--bone-muted);
             gap: 10px;
         }
 
@@ -371,7 +385,7 @@
             .footer-bottom { flex-direction: row; align-items: center; }
         }
 
-        .legal-links { display: flex; gap: 24px; }
+        .legal-links { display: flex; gap: 24px; flex-wrap: wrap; }
         .legal-btn {
             background: none;
             border: none;
@@ -380,14 +394,13 @@
             letter-spacing: 0.1em;
             transition: color 0.2s ease;
         }
-        .legal-btn:hover { color: var(--amber); }
+        .legal-btn:hover { color: var(--maroon); }
 
-        /* Modals */
         .modal {
             position: fixed;
             inset: 0;
             z-index: 3000;
-            background: rgba(3, 3, 3, 0.95);
+            background: rgba(26, 26, 26, 0.96);
             backdrop-filter: blur(20px);
             display: none;
             padding: 80px 10vw;
@@ -397,22 +410,132 @@
         }
 
         .modal.active { display: block; opacity: 1; }
-        
+
         #vignette {
             position: fixed;
             inset: 0;
-            background: radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.8) 100%);
+            background: radial-gradient(circle at center, transparent 20%, rgba(26,26,26,0.85) 100%);
             z-index: 5;
             pointer-events: none;
         }
 
-        /* Mobile tweaks */
+        /* Form Styles */
+        .booking-form {
+            width: 100%;
+            max-width: 560px;
+            margin: 2rem auto 0;
+            text-align: left;
+        }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--bone-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-input, .form-textarea {
+            width: 100%;
+            background: rgba(44,44,44,0.6);
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            min-height: 44px; /* Accessible touch input */
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: var(--bone);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            resize: vertical;
+        }
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--maroon);
+            box-shadow: 0 0 12px rgba(128, 0, 0, 0.3);
+        }
+        .submit-btn {
+            background: var(--maroon);
+            border: none;
+            padding: 14px 28px;
+            min-height: 44px;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--bone);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .submit-btn:hover {
+            background: #590000;
+            box-shadow: 0 0 18px rgba(128, 0, 0, 0.5);
+            color: white;
+        }
+        .form-message {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            text-align: center;
+            color: var(--bone-muted);
+        }
+        .form-message.success { color: var(--bone); }
+
+        /* ======================================================== 
+           Mobile UX Optimizations (Jobs-grade literal execution) 
+           ======================================================== */
         @media (max-width: 768px) {
             * { cursor: auto !important; }
             .custom-cursor, .light-flare { display: none !important; }
-            nav { padding: 20px; }
+            
+            nav { 
+                padding: max(20px, env(safe-area-inset-top)) 20px 20px; 
+            }
             .journey-step { padding: 100px 5vw; }
-            .pro-footer { padding: 30px 5vw 15px; }
+            .pro-footer { 
+                padding: 30px 5vw max(15px, env(safe-area-inset-bottom)); 
+            }
+            .booking-form { max-width: 100%; }
+            
+            /* Legibility corrections */
+            .footer-label { font-size: 0.7rem; }
+            .section-tag { font-size: 0.75rem; }
+            .menu-btn { font-size: 0.75rem; }
+            .form-label { font-size: 0.8rem; }
+            
+            /* Explicit thumb zones and minimum tap targets */
+            .footer-link { 
+                padding: 12px 0; 
+                display: block; 
+                min-height: 44px;
+            }
+            .legal-btn { 
+                padding: 12px 0; 
+                min-height: 44px; 
+            }
+            .list-item-accent { padding: 16px 0; }
+            
+            .modal button {
+                min-height: 44px;
+                min-width: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: flex-start;
+                padding: 8px 0;
+            }
+            
+            .pop-out-nav > button {
+                top: max(1rem, env(safe-area-inset-top));
+                right: max(1rem, env(safe-area-inset-right));
+                min-height: 44px;
+                min-width: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -429,9 +552,8 @@
         </button>
     </nav>
 
-    <!-- Pop-out Navigation Menu -->
     <div class="pop-out-nav" id="mainNav" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Navigation Menu">
-        <button class="absolute top-8 right-8 text-xs uppercase tracking-widest text-chrome hover:text-white interactive p-2" onclick="toggleNav()" aria-label="Close Menu">
+        <button class="absolute top-8 right-8 text-xs uppercase tracking-widest text-chrome hover:text-white interactive" onclick="toggleNav()" aria-label="Close Menu">
             [ Close ]
         </button>
         <div class="flex flex-col mt-10">
@@ -444,7 +566,6 @@
 
     <main class="interface" id="scroll-container">
         
-        <!-- THE LOGO JOURNEY (Restored Mic Drop) -->
         <section class="journey-step flex-col items-start justify-center" id="step-1" aria-labelledby="hero-title">
             <div class="w-full">
                 <div class="section-tag">Page 01 / Phoenix</div>
@@ -452,9 +573,9 @@
                 <div class="svg-hero-container">
                     <svg viewBox="0 0 670 200" id="logo-svg" aria-label="Reflex Logo Animation">
                         <defs>
-                            <linearGradient id="chromeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#666666;stop-opacity:1" />
+                            <linearGradient id="boneGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#E6DCC3;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#9A8B72;stop-opacity:1" />
                             </linearGradient>
                             <filter id="glow">
                                 <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
@@ -464,24 +585,20 @@
                                 </feMerge>
                             </filter>
                         </defs>
-                        <!-- Sharp Wordmark -->
-                        <g fill="none" stroke="url(#chromeGrad)" stroke-width="2.5" stroke-linejoin="miter">
+                        <g fill="none" stroke="url(#boneGrad)" stroke-width="2.5" stroke-linejoin="miter">
                             <path d="M40,160 V40 H110 C130,40 140,50 140,75 C140,100 130,110 110,110 H40 M100,110 L140,160" />
                             <path d="M170,40 H240 M170,100 H220 M170,160 H240 M170,40 V160" />
                             <path d="M270,40 H340 M270,100 H320 M270,40 V160" />
                             <path d="M370,40 V160 H440" />
                             <path d="M470,40 H540 M470,100 H520 M470,160 H540 M470,40 V160" />
                         </g>
-                        <!-- The Integrated X / Mic Drop -->
                         <g id="integrated-x">
-                            <path d="M560,40 L630,160 M630,40 L560,160" stroke="#333" stroke-width="3" />
-                            <path d="M585,140 L605,155 L635,145" stroke="var(--chrome)" stroke-width="2" id="hand-path" fill="none" />
-                            
-                            <!-- Falling Mic Payload -->
+                            <path d="M560,40 L630,160 M630,40 L560,160" stroke="#2C2C2C" stroke-width="3" />
+                            <path d="M585,140 L605,155 L635,145" stroke="var(--bone-muted)" stroke-width="2" id="hand-path" fill="none" />
                             <g id="mic-group" transform="translate(595, -100)">
-                                <rect x="-5" y="0" width="10" height="30" fill="var(--amber)" filter="url(#glow)"/>
-                                <path d="M-8,-8 H8 V4 H-8 Z" fill="#222" />
-                                <circle cx="0" cy="-10" r="8" fill="url(#chromeGrad)" />
+                                <rect x="-5" y="0" width="10" height="30" fill="var(--maroon)" filter="url(#glow)"/>
+                                <path d="M-8,-8 H8 V4 H-8 Z" fill="#1C1C1C" />
+                                <circle cx="0" cy="-10" r="8" fill="url(#boneGrad)" />
                             </g>
                         </g>
                     </svg>
@@ -489,28 +606,26 @@
 
                 <p class="body-text mt-8">
                     Set up your event around your needs to get top quality audio and selection, get setup with rhythm that sets a pace to let you lead the room at your event.
+                </p>
             </div>
         </section>
 
-        <!-- POWER & REVERB -->
         <section class="journey-step justify-end" id="step-2" aria-labelledby="power-title">
             <div class="max-w-xl text-right">
                 <div class="section-tag justify-end">Page 02 / Output</div>
-                <h2 class="heading-refined" id="power-title">Precision <br> <span class="accent-glow">Control</span></h2>
+                <h2 class="heading-refined" id="power-title">Master <br> <span class="accent-glow">Control</span></h2>
                 <p class="body-text ml-auto mt-6">
                     We have proven punctuality for upscale events in politics to huge rooftop parties. We love what we do, and serving Phoenix is what we do best.
-                </p>
                 </p>
             </div>
         </section>
 
-        <!-- REFINED SERVICES -->
         <section class="journey-step" id="step-3" aria-labelledby="services-title">
             <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                 <div>
                     <div class="section-tag">Page 03 / Operations</div>
                     <div class="glass-card mt-6">
-                        <div class="footer-label text-amber" id="services-title">Capabilities</div>
+                        <div class="footer-label text-amber" id="services-title">Services</div>
                         <ul class="mt-6" role="list">
                             <li class="list-item-accent interactive">
                                 <span class="dot"></span> Live Audio Monitoring
@@ -527,35 +642,53 @@
                         </ul>
                     </div>
                 </div>
-                <div>
-                    <!-- Visual balance area, 3D object dominates here -->
-                </div>
+                <div></div>
             </div>
         </section>
 
-        <!-- CLEAN CONTACT -->
         <section class="journey-step flex-col items-center justify-center text-center" id="step-4" aria-labelledby="contact-title">
             <div class="w-full max-w-2xl">
-                <div class="section-tag justify-center">Page 04 / Hey</div>
-                <h2 class="heading-refined mb-10" id="contact-title">Schedule <br> Booking</h2>
-                <a href="mailto:book@reflex.com" class="menu-btn interactive inline-block" style="font-size: 0.8rem; padding: 16px 32px;" aria-label="Send an email to book Reflex Entertainment">
-                    Contact Joe
-                </a>
+                <div class="section-tag justify-center">Page 04 / Inquire</div>
+                <h2 class="heading-refined mb-4" id="contact-title">Schedule <br> Booking</h2>
+                <p class="body-text mx-auto mb-6">Request a quote or check availability — our team replies within 24 hours.</p>
+                
+                <form id="bookingForm" class="booking-form" action="https://formsubmit.co/ajax/Joewilson3030@gmail.com" method="POST">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="text" name="_honey" style="display:none">
+                    
+                    <div class="form-group">
+                        <label for="name" class="form-label">Full name *</label>
+                        <input type="text" id="name" name="name" class="form-input" required aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email address *</label>
+                        <input type="email" id="email" name="email" class="form-input" required aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="event_date" class="form-label">Preferred event date</label>
+                        <input type="text" id="event_date" name="event_date" class="form-input" placeholder="e.g., June 12, 2026">
+                    </div>
+                    <div class="form-group">
+                        <label for="message" class="form-label">Event details / message *</label>
+                        <textarea id="message" name="message" rows="4" class="form-textarea" required aria-required="true"></textarea>
+                    </div>
+                    <button type="submit" id="submitBtn" class="submit-btn interactive">Send inquiry →</button>
+                    <div id="formFeedback" class="form-message" aria-live="polite"></div>
+                </form>
             </div>
         </section>
 
-        <!-- PRO-GRADE FOOTER -->
         <footer class="pro-footer" role="contentinfo">
             <div class="footer-grid">
                 <div>
                     <div class="font-bold text-xs tracking-[0.4em] uppercase text-white mb-2">REFLEX™</div>
-                    <p class="text-xs text-chrome max-w-sm">Professional audio solutions architected for the Phoenix metropolitan area.</p>
+                    <p class="text-xs text-chrome max-w-sm">Professional audio solutions built for the Phoenix metropolitan area.</p>
                 </div>
                 <div>
                     <div class="footer-label">Contact</div>
                     <div class="footer-value">
-                        <a href="tel:7179197731" class="footer-link interactive block">555.555.5555</a>
-                        <a href="mailto:hello@reflex.com" class="footer-link interactive block mt-1">hello@reflex.com</a>
+                        <a href="tel:602.350.2145" class="footer-link interactive">602.350.2145</a>
+                        <a href="mailto:Joewilson3030@gmail.com" class="footer-link interactive">Joewilson3030@gmail.com</a>
                     </div>
                 </div>
                 <div>
@@ -576,15 +709,14 @@
         </footer>
     </main>
 
-    <!-- CLEAN MODALS -->
     <div id="privacy" class="modal" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
         <div class="max-w-3xl mx-auto">
             <button onclick="hideModal()" class="text-xs uppercase mb-8 text-chrome hover:text-white interactive" aria-label="Close Privacy Policy">[ Close ]</button>
             <h2 class="heading-refined mb-8 text-3xl" id="privacy-title">Privacy Policy</h2>
             <div class="body-text space-y-6">
                 <p>We maintain strict confidentiality regarding client operations and event details.</p>
-                <p><strong>1. Data Collection:</strong> Information collected via direct correspondence (phone, email) is utilized exclusively for logistical planning and execution of secured engagements.</p>
-                <p><strong>2. Security:</strong> Client rosters and internal event data are never distributed to external entities.</p>
+                <p><strong>1. Data Collection:</strong> Information collected via direct correspondence (phone, email) is utilized exclusively for logistical planning and operation of secured engagements.</p>
+                <p><strong>2. Security:</strong> Client rosters and internal event data remain strictly private.</p>
             </div>
         </div>
     </div>
@@ -596,13 +728,12 @@
             <div class="body-text space-y-6">
                 <p>Operational standards for engagement with Reflex Entertainment.</p>
                 <p><strong>1. Logistics:</strong> Engagement dates are officially secured upon receipt of an executed agreement and designated deposit.</p>
-                <p><strong>2. Environment:</strong> We deploy professional-grade equipment and require secure, grounded staging areas to ensure optimal audio delivery.</p>
+                <p><strong>2. Environment:</strong> We deploy professional-grade equipment and require secure, grounded staging areas to guarantee maximum audio impact.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // --- CUSTOM CURSOR LOGIC (ZERO LATENCY) ---
         const cursor = document.getElementById('cursor');
         const flare = document.getElementById('flare');
         
@@ -618,12 +749,16 @@
             yTo(e.clientY);
             flareXTo(e.clientX);
             flareYTo(e.clientY);
-            
             mouseX = (e.clientX / window.innerWidth) - 0.5;
             mouseY = (e.clientY / window.innerHeight) - 0.5;
         });
 
-        // Mobile touch support
+        /* Disable custom interactions on touch interfaces */
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+            cursor.style.display = 'none';
+            flare.style.display = 'none';
+        }
+
         window.addEventListener('touchmove', (e) => {
             if(e.touches.length > 0) {
                 mouseX = (e.touches[0].clientX / window.innerWidth) - 0.5;
@@ -631,36 +766,25 @@
             }
         }, { passive: true });
 
-        // Accelerometer / Gyroscope support for mobile tilt
         window.addEventListener('deviceorientation', (e) => {
             if (e.gamma !== null && e.beta !== null) {
-                // gamma is the left-to-right tilt in degrees
                 mouseX = Math.max(-0.5, Math.min(0.5, e.gamma / 90));
-                // beta is the front-to-back tilt in degrees (offset by 45deg for typical holding angle)
                 mouseY = Math.max(-0.5, Math.min(0.5, (e.beta - 45) / 90));
             }
         });
 
-        // Hover states for the custom cursor
         document.querySelectorAll('.interactive').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.classList.add('hover-active'));
             el.addEventListener('mouseleave', () => cursor.classList.remove('hover-active'));
         });
 
-        // --- UI LOGIC ---
         function toggleNav() {
             const nav = document.getElementById('mainNav');
             const toggle = document.getElementById('menuToggle');
             const isActive = nav.classList.toggle('active');
-            
             toggle.setAttribute('aria-expanded', isActive);
             nav.setAttribute('aria-hidden', !isActive);
-            
-            if(isActive) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = 'auto';
-            }
+            document.body.style.overflow = isActive ? 'hidden' : 'auto';
         }
 
         function showModal(id) {
@@ -678,7 +802,59 @@
             document.body.style.overflow = 'auto';
         }
 
-        // --- THREE.JS ENGINE ---
+        const form = document.getElementById('bookingForm');
+        const feedback = document.getElementById('formFeedback');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+            
+            if (!name || !email || !message) {
+                feedback.textContent = 'Please complete all required fields to continue.';
+                feedback.style.color = 'var(--maroon)';
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            feedback.textContent = '';
+            
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json' },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    feedback.textContent = 'Inquiry submitted. We will be in touch.';
+                    feedback.className = 'form-message success';
+                    form.reset();
+                } else {
+                    const data = await response.json();
+                    if (Object.hasOwn(data, 'errors')) {
+                        feedback.textContent = data["errors"].map(err => err["message"]).join(", ");
+                    } else {
+                        feedback.textContent = 'Submission unsuccessful. Please try again.';
+                    }
+                    feedback.style.color = 'var(--maroon)';
+                }
+            } catch (error) {
+                feedback.textContent = 'Connection issue detected. Please verify your connection.';
+                feedback.style.color = 'var(--maroon)';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send inquiry →';
+            }
+        });
+
+        /* THREE.JS Scene */
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -686,59 +862,50 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
-        const amberLight = new THREE.PointLight(0xffaa00, 8, 40);
-        amberLight.position.set(5, 5, 5);
-        scene.add(amberLight);
+        const maroonLight = new THREE.PointLight(0x800000, 7.5, 38);
+        maroonLight.position.set(5, 5, 5);
+        scene.add(maroonLight);
 
-        const fillLight = new THREE.DirectionalLight(0xffffff, 0.2);
+        const fillLight = new THREE.DirectionalLight(0xbcac8c, 0.28);
         fillLight.position.set(-5, 0, 5);
         scene.add(fillLight);
 
-        // Core Glass Monolith
-        const monolithGeo = new THREE.BoxGeometry(3.5, 6, 0.4);
-        const monolithMat = new THREE.MeshPhysicalMaterial({
-            color: 0x111111, metalness: 0.9, roughness: 0.1,
-            transmission: 0.9, thickness: 1, transparent: true, opacity: 0.4,
+        const prismGeo = new THREE.BoxGeometry(3.5, 6, 0.4);
+        const prismMat = new THREE.MeshPhysicalMaterial({
+            color: 0x1c1c1c, metalness: 0.88, roughness: 0.12,
+            transmission: 0.85, thickness: 1, transparent: true, opacity: 0.45,
             clearcoat: 1.0, clearcoatRoughness: 0.1
         });
-        const monolith = new THREE.Mesh(monolithGeo, monolithMat);
+        const prism = new THREE.Mesh(prismGeo, prismMat);
 
-        // Add structural glowing accent lines to the monolith
-        const edges = new THREE.EdgesGeometry(monolithGeo);
-        const lineMat = new THREE.LineBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.5 });
+        const edges = new THREE.EdgesGeometry(prismGeo);
+        const lineMat = new THREE.LineBasicMaterial({ color: 0x800000, transparent: true, opacity: 0.65 });
         const wireframe = new THREE.LineSegments(edges, lineMat);
-        monolith.add(wireframe);
+        prism.add(wireframe);
 
-        scene.add(monolith);
+        scene.add(prism);
         camera.position.z = 10;
 
-        // Sub-kick structural effect on mousedown
         window.addEventListener('mousedown', () => {
             document.body.classList.add('sub-kick');
             setTimeout(() => document.body.classList.remove('sub-kick'), 200);
-            
-            // Pulse the accent lines
-            gsap.fromTo(lineMat, { opacity: 1 }, { opacity: 0.5, duration: 0.4 });
-            gsap.fromTo(amberLight, { intensity: 15 }, { intensity: 8, duration: 0.4 });
+            gsap.fromTo(lineMat, { opacity: 1 }, { opacity: 0.55, duration: 0.4 });
+            gsap.fromTo(maroonLight, { intensity: 14 }, { intensity: 7, duration: 0.4 });
         });
 
         function animate() {
             requestAnimationFrame(animate);
-            monolith.rotation.y += 0.002;
-            monolith.rotation.x = mouseY * 0.15;
-            monolith.position.x = mouseX * 2;
-            
-            amberLight.position.x = mouseX * 15;
-            amberLight.position.y = -mouseY * 15;
-            
+            prism.rotation.y += 0.002;
+            prism.rotation.x = mouseY * 0.15;
+            prism.position.x = mouseX * 2;
+            maroonLight.position.x = mouseX * 15;
+            maroonLight.position.y = -mouseY * 15;
             renderer.render(scene, camera);
         }
         
-        // --- GSAP SCROLL LOGIC ---
         gsap.registerPlugin(ScrollTrigger);
 
         function initAnimations() {
-            // 1. The Literal Reflex Effect (Mic Drop into X)
             const mic = document.getElementById('mic-group');
             const hand = document.getElementById('hand-path');
 
@@ -752,30 +919,29 @@
             });
 
             micTl.to(mic, { y: 155, ease: "none" })
-                 .to(hand, { strokeWidth: 4, stroke: "#ffaa00", scale: 1.05, transformOrigin: "center" }, "<");
+                 .to(hand, { strokeWidth: 4, stroke: "#800000", scale: 1.05, transformOrigin: "center" }, "<");
 
-            // 2. Journey Transitions for 3D Environment
             gsap.to(camera.position, { 
                 z: 4, 
                 scrollTrigger: { trigger: "#step-1", start: "top top", end: "bottom top", scrub: 1 }
             });
 
-            gsap.to(monolith.rotation, { 
+            gsap.to(prism.rotation, { 
                 y: Math.PI * 2, 
                 scrollTrigger: { trigger: "#scroll-container", start: "top top", end: "bottom bottom", scrub: 2 }
             });
 
-            gsap.to(monolith.position, { 
+            gsap.to(prism.position, { 
                 x: -6, z: -2,
                 scrollTrigger: { trigger: "#step-2", start: "top center", end: "bottom top", scrub: 1 }
             });
 
-            gsap.to(monolith.position, { 
+            gsap.to(prism.position, { 
                 x: 6, z: -2,
                 scrollTrigger: { trigger: "#step-3", start: "top center", end: "bottom top", scrub: 1 }
             });
 
-            gsap.to(monolith.position, { 
+            gsap.to(prism.position, { 
                 x: 0, z: -4, 
                 scrollTrigger: { trigger: "#step-4", start: "top bottom", end: "center center", scrub: 1 }
             });

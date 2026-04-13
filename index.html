@@ -15,7 +15,7 @@
         :root {
             --obsidian: #030303;
             --maroon: #8A033E; 
-            --maroon-glow: rgba(138, 3, 62, 0.4);
+            --maroon-glow: rgba(96, 2, 37, 0.2); /* Deepened to remove pink blow-out */
             --white: #ffffff;
             --chrome: #a1a1aa;
             --surface: rgba(255, 255, 255, 0.03);
@@ -293,6 +293,14 @@
             color: var(--maroon);
         }
 
+        /* Dedicated Hero Scale Classes */
+        .hero-text {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            line-height: 1.6;
+            color: var(--chrome);
+            max-width: 600px;
+        }
+
         .body-text {
             font-size: 1rem;
             line-height: 1.6;
@@ -300,10 +308,9 @@
             max-width: 480px;
         }
 
-        /* The SVG Logo Integration */
         .svg-hero-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
             margin-bottom: 2rem;
         }
 
@@ -659,10 +666,10 @@
                 <div class="section-tag"> 01 / REFLEX ENTERTAINMENT™ </div>
                 
                 <div class="svg-hero-container">
-                    <img src="https://www.dropbox.com/scl/fi/apwmnamfq740l6skb1mcr/rflxcut1.png?rlkey=2knaei6f88szy1uh73za5b6fo&st=dgznkpdx&raw=1" alt="Reflex Entertainment Logo" class="w-[90%] md:w-auto max-w-[600px] h-auto block -ml-2 md:-ml-4" style="filter: invert(92%) sepia(8%) saturate(120%) hue-rotate(330deg) brightness(95%); object-fit: contain; object-position: left;" onerror="this.style.display='none'">
+                    <img src="https://www.dropbox.com/scl/fi/apwmnamfq740l6skb1mcr/rflxcut1.png?rlkey=2knaei6f88szy1uh73za5b6fo&st=dgznkpdx&raw=1" alt="Reflex Entertainment Logo" class="w-[90%] md:w-full max-w-[850px] h-auto block -ml-2 md:-ml-4" style="filter: invert(92%) sepia(8%) saturate(120%) hue-rotate(330deg) brightness(95%); object-fit: contain; object-position: left;" onerror="this.style.display='none'">
                 </div>
 
-                <p class="body-text mt-6 md:mt-8">
+                <p class="hero-text mt-6 md:mt-8">
                     We provide Phoenix's premier live audio for your event.
                 </p>
             </div>
@@ -916,7 +923,8 @@
         renderer.setPixelRatio(resScale);
         document.body.appendChild(renderer.domElement);
 
-        const maroonLight = new THREE.PointLight(0x8A033E, 8, 40);
+        /* Adjusted Lighting for sophisticated crimson reflection */
+        const maroonLight = new THREE.PointLight(0x600225, 4, 50);
         maroonLight.position.set(5, 5, 5);
         scene.add(maroonLight);
 
@@ -998,7 +1006,7 @@
             );
 
             gsap.fromTo(baseLineMat, { opacity: 1 }, { opacity: 0.6, duration: 0.4 });
-            gsap.fromTo(maroonLight, { intensity: 15 }, { intensity: 8, duration: 0.4 });
+            gsap.fromTo(maroonLight, { intensity: 8 }, { intensity: 4, duration: 0.4 });
         };
         window.addEventListener('mousedown', triggerKick);
         window.addEventListener('touchstart', triggerKick, {passive: true});
@@ -1022,7 +1030,7 @@
             particlesMesh.rotation.y = time * 0.05;
             particlesMesh.rotation.x = time * 0.02;
             
-            maroonLight.intensity = 8 + Math.sin(time * 2) * 1.5;
+            maroonLight.intensity = 4 + Math.sin(time * 2) * 0.8;
             
             maroonLight.position.x = mouseX * 15;
             maroonLight.position.y = -mouseY * 15;

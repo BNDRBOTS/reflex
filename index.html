@@ -23,7 +23,7 @@
         }
 
         /* Typography Selection and Accessibility */
-        h1, h2, h3, p, span, div, address, li {
+        h1, h2, h3, p, span, div, address, li, input, textarea {
             user-select: text;
             -webkit-user-select: text;
         }
@@ -203,6 +203,28 @@
             transition: color 0.3s ease;
         }
 
+        /* Form Inputs */
+        .form-input {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            color: var(--white);
+            padding: 16px 20px;
+            width: 100%;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            -webkit-appearance: none;
+            border-radius: 0;
+            pointer-events: auto;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--maroon);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: inset 0 0 15px rgba(138, 3, 62, 0.1);
+        }
+
         /* Pointer Input Definitions */
         @media (hover: hover) and (pointer: fine) {
             .menu-btn:hover, .menu-btn:focus {
@@ -228,9 +250,7 @@
             .list-item-accent:hover { color: var(--white); }
             .list-item-accent:hover .dot { background: var(--maroon); box-shadow: 0 0 10px var(--maroon); }
             
-            /* Apple Footer Interactions */
             .footer-link:hover, .legal-btn:hover { color: var(--white); }
-            
             .close-btn:hover { color: var(--white); }
         }
 
@@ -414,7 +434,7 @@
             100% { transform: translateY(0); }
         }
 
-        /* Pro-Grade Footer (Precision Compression) */
+        /* Pro-Grade Footer */
         .pro-footer {
             background: #000;
             border-top: 1px solid #2a2a2c; 
@@ -562,19 +582,17 @@
             100% { transform: translate(3vw, 4vh) scale(1.1); opacity: 0.25; }
         }
 
-        /* Mobile specific strict overrides - Preserving Desktop strictly */
+        /* Mobile specific strict overrides */
         @media (max-width: 768px), (hover: none) and (pointer: coarse) {
             * { cursor: auto !important; }
             .custom-cursor, .light-flare { display: none !important; }
             nav { padding: max(16px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 16px max(20px, env(safe-area-inset-left)); }
             
-            /* Cinematic Mobile Geometry */
             .journey-step { padding: 120px 6vw; min-height: 85dvh; }
             #step-1 { min-height: 100dvh; padding-top: max(140px, env(safe-area-inset-top)); }
             
             .glass-card { padding: 32px 24px; }
             
-            /* Footer Compression overrides */
             .pro-footer { padding: 32px 6vw max(24px, env(safe-area-inset-bottom)); }
             .footer-grid { gap: 24px 16px; margin-bottom: 24px; }
             .footer-label { margin-bottom: 6px; }
@@ -585,7 +603,6 @@
             .justify-end { justify-content: flex-start; }
             .ml-auto { margin-left: 0; }
 
-            /* Touch Interactions Geometry Expansion - Nav Only */
             .menu-btn, .nav-item {
                 min-height: 44px;
                 display: inline-flex;
@@ -742,13 +759,13 @@
             <div class="w-full max-w-2xl">
                 <div class="section-tag justify-center"> 04 / Booking</div>
                 <h2 class="heading-refined mb-6 md:mb-10" id="contact-title">Secure Your <br> Date</h2>
-                <a href="mailto:book@reflex.com" class="menu-btn interactive inline-block" style="font-size: 0.8rem; padding: 16px 32px;" aria-label="Send an email to book Reflex Entertainment">
+                <button onclick="showModal('contact-form')" class="menu-btn interactive inline-block" style="font-size: 0.8rem; padding: 16px 32px;" aria-label="Open contact form to book Reflex Entertainment">
                     Contact Booking
-                </a>
+                </button>
             </div>
         </section>
 
-        <!-- PRO-GRADE FOOTER (Apple Aesthetic Compressed) -->
+        <!-- PRO-GRADE FOOTER -->
         <footer class="pro-footer" role="contentinfo">
             <div class="footer-grid">
                 <div>
@@ -759,7 +776,7 @@
                     <div class="footer-label">Contact</div>
                     <div class="footer-value flex flex-col items-start gap-1">
                         <a href="tel:6023502145" class="footer-link interactive">602.350.2145</a>
-                        <a href="mailto:Joewilson3030@gmail.com" class="footer-link interactive">Joewilson3030@gmail.com</a>
+                        <a href="javascript:void(0)" onclick="showModal('contact-form')" role="button" class="footer-link interactive w-full text-left bg-transparent border-none p-0 font-inherit inline-block">Joewilson3030@gmail.com</a>
                     </div>
                 </div>
                 <div>
@@ -781,7 +798,37 @@
         </footer>
     </main>
 
-    <!-- CLEAN MODALS -->
+    <!-- FORM & LEGAL MODALS -->
+    <div id="contact-form" class="modal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
+        <div class="max-w-2xl mx-auto">
+            <button onclick="hideModal()" class="text-xs uppercase mb-8 text-chrome close-btn interactive md:-ml-4 -ml-4" aria-label="Close Contact Form">[ Close ]</button>
+            <h2 class="heading-refined mb-8 text-3xl" id="contact-modal-title">Direct Line</h2>
+            
+            <form action="https://formsubmit.co/Joewilson3030@gmail.com" method="POST" class="flex flex-col gap-6 w-full">
+                <!-- Bypassing captchas strictly to prevent 3rd-party styling and emojis -->
+                <input type="hidden" name="_subject" value="Reflex Entertainment - New Inquiry">
+                <input type="hidden" name="_captcha" value="false">
+                
+                <div class="flex flex-col gap-2">
+                    <label for="name" class="text-xs uppercase tracking-widest text-chrome font-[600]">Name</label>
+                    <input type="text" id="name" name="name" required class="form-input interactive">
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <label for="email" class="text-xs uppercase tracking-widest text-chrome font-[600]">Email</label>
+                    <input type="email" id="email" name="email" required class="form-input interactive">
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <label for="message" class="text-xs uppercase tracking-widest text-chrome font-[600]">Event Details</label>
+                    <textarea id="message" name="message" required rows="4" class="form-input interactive resize-none"></textarea>
+                </div>
+                
+                <button type="submit" class="menu-btn interactive mt-2 self-start py-4 px-8 w-full sm:w-auto">Submit Inquiry</button>
+            </form>
+        </div>
+    </div>
+
     <div id="privacy" class="modal" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
         <div class="max-w-3xl mx-auto">
             <button onclick="hideModal()" class="text-xs uppercase mb-8 text-chrome close-btn interactive md:-ml-4 -ml-4" aria-label="Close Privacy Policy">[ Close ]</button>

@@ -15,7 +15,7 @@
         :root {
             --obsidian: #030303;
             --maroon: #8A033E; 
-            --maroon-glow: rgba(96, 2, 37, 0.2); /* Deepened to remove pink blow-out */
+            --maroon-glow: rgba(220, 215, 207, 0.15); /* Refined bone-white glow */
             --white: #ffffff;
             --chrome: #a1a1aa;
             --surface: rgba(255, 255, 255, 0.03);
@@ -83,7 +83,7 @@
             pointer-events: auto; 
         }
 
-        /* Zero Latency Cursor */
+        /* Zero Latency Cursor - Bone White Precision */
         .custom-cursor {
             position: fixed;
             top: 0;
@@ -113,7 +113,7 @@
             left: 0;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(220, 215, 207, 0.15) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(220, 215, 207, 0.1) 0%, transparent 60%);
             pointer-events: none;
             z-index: 0;
             transform: translate(-50%, -50%);
@@ -441,7 +441,7 @@
             100% { transform: translateY(0); }
         }
 
-        /* Pro-Grade Footer */
+        /* Pro-Grade Footer (Precision Symmetrical Grid) */
         .pro-footer {
             background: #000;
             border-top: 1px solid #2a2a2c; 
@@ -666,11 +666,15 @@
                 <div class="section-tag"> 01 / REFLEX ENTERTAINMENT™ </div>
                 
                 <div class="svg-hero-container">
-                    <img src="https://www.dropbox.com/scl/fi/apwmnamfq740l6skb1mcr/rflxcut1.png?rlkey=2knaei6f88szy1uh73za5b6fo&st=dgznkpdx&raw=1" alt="Reflex Entertainment Logo" class="w-[90%] md:w-full max-w-[850px] h-auto block -ml-2 md:-ml-4" style="filter: invert(92%) sepia(8%) saturate(120%) hue-rotate(330deg) brightness(95%); object-fit: contain; object-position: left;" onerror="this.style.display='none'">
+                    <img src="https://www.dropbox.com/scl/fi/apwmnamfq740l6skb1mcr/rflxcut1.png?rlkey=2knaei6f88szy1uh73za5b6fo&st=dgznkpdx&raw=1" 
+                         alt="Reflex Entertainment Logo" 
+                         class="w-[90%] md:w-full max-w-[850px] h-auto block -ml-2 md:-ml-4" 
+                         style="filter: invert(92%) sepia(8%) saturate(120%) hue-rotate(330deg) brightness(95%); object-fit: contain; object-position: left;" 
+                         onerror="this.style.display='none'">
                 </div>
 
                 <p class="hero-text mt-6 md:mt-8">
-                    We provide Phoenix's premier live audio for your event.
+                    The sound for Phoenix’s biggest nights.
                 </p>
             </div>
         </section>
@@ -682,12 +686,12 @@
             </div>
 
             <div class="max-w-xl md:text-right">
-                <div class="section-tag md:justify-end"> 02 / RESULTS </div>
-                <h2 class="heading-refined" id="power-title"> Experience Pays Off <br> <span class="accent-glow">Delivered</span></h2>
+                <div class="section-tag md:justify-end"> 02 / OUR WORK </div>
+                <h2 class="heading-refined" id="power-title"> SOUND THAT <br> <span class="accent-glow">HITS.</span></h2>
                 <p class="body-text md:ml-auto mt-4 md:mt-6">
-                    Our reliable team applies decades of combined experience to your busy schedule.
-                    
-                    Political events. Concert crowds. Rooftop parties. We deliver the sound you demand. Call us today.
+                    Rallies, festivals, and private sets.
+                    We set the gear and manage the sound so the room hears every word.
+                    Give us the time and the place. We take it from there.
                 </p>
             </div>
         </section>
@@ -701,22 +705,22 @@
 
             <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
                 <div>
-                    <div class="section-tag"> 03 / Our Services</div>
+                    <div class="section-tag"> 03 / Locally Respected</div>
                     <div class="glass-card mt-4 md:mt-6">
                         <div class="accent-cross" style="top: 10px; right: 10px; opacity: 0.5;"></div>
-                        <div class="footer-label text-maroon" id="services-title">Live Audio</div>
+                        <div class="footer-label text-maroon" id="services-title">Live Sound</div>
                         <ul class="mt-4 md:mt-6" role="list">
                             <li class="list-item-accent interactive">
-                                <span class="dot"></span> Professional Audio Systems
+                                <span class="dot"></span> Pro-grade rigs
                             </li>
                             <li class="list-item-accent interactive">
-                                <span class="dot"></span> Private Events & Shows 
+                                <span class="dot"></span> Concerts and private sets
                             </li>
                             <li class="list-item-accent interactive">
-                                <span class="dot"></span> Phoenix Metro Area
+                                <span class="dot"></span> Sound, Speakers, and lights
                             </li>
                             <li class="list-item-accent interactive !border-b-0">
-                                <span class="dot"></span> Staging, Lighting & Rigging
+                                <span class="dot"></span> Based in Phoenix
                             </li>
                         </ul>
                     </div>
@@ -731,9 +735,9 @@
             
             <div class="w-full max-w-2xl">
                 <div class="section-tag justify-center"> 04 / Booking</div>
-                <h2 class="heading-refined mb-6 md:mb-10" id="contact-title">Secure Your <br> Date</h2>
+                <h2 class="heading-refined mb-6 md:mb-10" id="contact-title">LET’S GET THE GEAR ON SITE.</h2>
                 <button onclick="showModal('contact-form')" class="menu-btn interactive inline-block" style="font-size: 0.8rem; padding: 16px 32px;" aria-label="Open contact form to book Reflex Entertainment">
-                    Contact Booking
+                    Message the crew
                 </button>
             </div>
         </section>
@@ -923,7 +927,7 @@
         renderer.setPixelRatio(resScale);
         document.body.appendChild(renderer.domElement);
 
-        /* Adjusted Lighting for sophisticated bone-white reflection */
+        /* Adjusted Lighting for sophisticated bone-white reflection - Resolving pink clipping */
         const maroonLight = new THREE.PointLight(0xdcd7cf, 2.5, 50);
         maroonLight.position.set(5, 5, 5);
         scene.add(maroonLight);
